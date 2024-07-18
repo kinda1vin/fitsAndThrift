@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".editprofile">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/fragment_container1"
+        android:layout_marginBottom="16dp">
+
+        <ImageView
+            android:id="@+id/pic"
+            android:layout_width="169dp"
+            android:layout_height="170dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="15dp"
+            app:srcCompat="@drawable/pic" />
+
+        <EditText
+            android:id="@+id/newname"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginVertical="10dp"
+            android:background="@drawable/round_corners_bg"
+            android:drawableEnd="@drawable/baseline_account_box_24"
+            android:ems="10"
+            android:hint="Name"
+            android:inputType="text"
+            android:paddingVertical="10dp" />
+
+        <EditText
+            android:id="@+id/newmail"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginVertical="10dp"
+            android:background="@drawable/round_corners_bg"
+            android:drawableEnd="@drawable/baseline_email_24"
+            android:ems="10"
+            android:hint="Mail"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/gender"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginVertical="10dp"
+            android:background="@drawable/round_corners_bg"
+            android:drawableEnd="@drawable/baseline_transgender_24"
+            android:ems="10"
+            android:hint="Gender"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/newph"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginVertical="10dp"
+            android:background="@drawable/round_corners_bg"
+            android:drawableEnd="@drawable/baseline_phone_24"
+            android:ems="10"
+            android:hint="Phone Number"
+            android:inputType="text" />
+
+        <Button
+            android:id="@+id/save_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginVertical="15dp"
+            android:text="Save"
+            app:cornerRadius="30dp" />
+    </LinearLayout>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_container1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/fragment_container2"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_container2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/fragment_container1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
