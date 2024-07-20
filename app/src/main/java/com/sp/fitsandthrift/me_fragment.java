@@ -1,4 +1,4 @@
-package com.sp.myapplication;
+package com.sp.fitsandthrift;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,7 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.sp.myapplication.model.Usermodel;
+import com.google.firebase.auth.FirebaseAuth;
+import com.sp.fitsandthrift.model.Usermodel;
 
 public class me_fragment extends Fragment {
 
@@ -25,6 +26,7 @@ public class me_fragment extends Fragment {
     private ImageView profilepic;
     private Button editProfile;
     private Button uploadItem;
+    private Button logout;
 
     private String mail;
     private String name;
@@ -55,6 +57,18 @@ public class me_fragment extends Fragment {
         TextView gmailTextView = view.findViewById(R.id.gmail1);
 
         editProfile = view.findViewById(R.id.editprofile);
+        logout = view.findViewById(R.id.btnLogout);
+
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(getContext(), Login.class);
+                startActivity(intent);
+
+            }
+        });
+
 
         editProfile.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), editprofile.class);

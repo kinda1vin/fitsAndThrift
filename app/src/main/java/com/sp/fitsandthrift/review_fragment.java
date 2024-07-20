@@ -1,4 +1,4 @@
-package com.sp.myapplication;
+package com.sp.fitsandthrift;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

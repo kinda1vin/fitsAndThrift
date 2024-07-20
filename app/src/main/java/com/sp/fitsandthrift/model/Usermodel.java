@@ -1,4 +1,4 @@
-package com.sp.myapplication.model;
+package com.sp.fitsandthrift.model;
 
 public class Usermodel {
     private String email;

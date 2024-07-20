@@ -91,6 +91,22 @@ tools:context=".Home_fragment">
                     app:cornerRadius="30dp"
                     app:icon="@drawable/baseline_edit_24"
                     app:iconPadding="3dp" />
+
+                <Button
+                    android:id="@+id/btnLogout"
+                    android:layout_width="186dp"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#000000"
+                    android:fontFamily="sans-serif"
+                    android:insetLeft="55dp"
+                    android:text="Log Out"
+                    android:textSize="10sp"
+                    android:textStyle="normal"
+                    app:cornerRadius="30dp"
+                    app:icon="@drawable/baseline_edit_24"
+                    app:iconPadding="3dp" />
+
+
             </LinearLayout>
 
         </LinearLayout>

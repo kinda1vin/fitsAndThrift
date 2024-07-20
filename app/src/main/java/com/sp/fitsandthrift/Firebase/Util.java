@@ -1,4 +1,4 @@
-package com.sp.myapplication.Firebase;
+package com.sp.fitsandthrift.Firebase;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;

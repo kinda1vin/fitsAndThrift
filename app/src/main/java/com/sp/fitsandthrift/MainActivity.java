@@ -1,4 +1,4 @@
-package com.sp.myapplication;
+package com.sp.fitsandthrift;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -6,16 +6,22 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
     private FrameLayout frame;
+    private FirebaseAuth auth;
+    private FirebaseUser user;
+
     Home_fragment homeFragment;
     about_fragment aboutFragment;
     me_fragment meFragment;
@@ -27,6 +33,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+
+        if (user == null) {
+            Intent intent = new Intent(getApplicationContext(), Login.class);
+            startActivity(intent);
+            finish();
+        }
+
         homeFragment = new Home_fragment();
         aboutFragment = new about_fragment();
         meFragment = new me_fragment();
@@ -62,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                     loadFragment(new notification_fragment(), false);
                     item.setIcon(R.drawable.bell); // Change to selected icon
                 } else if (itemId == R.id.me) {
-                    String email = getIntent().getStringExtra("email");
+                    String email = user.getEmail();
                     me_fragment meFragment = me_fragment.newInstance("", email); // Pass the email
                     loadFragment(meFragment, false);
                     item.setIcon(R.drawable.activeprofile); // Change to selected icon
@@ -71,6 +87,22 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Check again if the user is signed in when the activity starts
+        user = auth.getCurrentUser();
+        if (user == null) {
+            navigateToLogin();
+        }
+    }
+
+    private void navigateToLogin() {
+        Intent intent = new Intent(MainActivity.this, Login.class);
+        startActivity(intent);
+        finish();
     }
 
     private void loadFragment(Fragment fragment, boolean isAppInitialized) {

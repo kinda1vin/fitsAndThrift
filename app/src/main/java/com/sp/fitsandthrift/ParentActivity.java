@@ -1,4 +1,4 @@
-package com.sp.myapplication;
+package com.sp.fitsandthrift;
 
 import android.content.Intent;
 import android.os.Bundle;

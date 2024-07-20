@@ -1,4 +1,4 @@
-package com.sp.myapplication;
+package com.sp.fitsandthrift;
 
 import static android.content.ContentValues.TAG;
 
@@ -21,9 +21,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
-import com.google.firebase.auth.FirebaseUser;
-import com.sp.myapplication.Firebase.Util;
-import com.sp.myapplication.model.Usermodel;
+import com.sp.fitsandthrift.Firebase.Util;
+import com.sp.fitsandthrift.model.Usermodel;
 
 public class Register extends AppCompatActivity {
 

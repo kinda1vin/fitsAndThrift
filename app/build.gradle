@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.sp.myapplication'
+    namespace 'com.sp.fitsandthrift'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.sp.myapplication"
+        applicationId "com.sp.fitsandthrift"
         minSdk 27
         targetSdk 34
         versionCode 1
