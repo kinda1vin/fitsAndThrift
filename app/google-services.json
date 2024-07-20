@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "67656263799",
-    "project_id": "fitsandthrifts-eed82",
-    "storage_bucket": "fitsandthrifts-eed82.appspot.com"
+    "project_number": "161452161273",
+    "project_id": "fitsandthrift",
+    "storage_bucket": "fitsandthrift.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:67656263799:android:3e3219b3c834a828bebe72",
+        "mobilesdk_app_id": "1:161452161273:android:97965eda586487151a8a28",
         "android_client_info": {
           "package_name": "com.sp.myapplication"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCbcMKbP1JWyPn7qkRpzcYAvhW6Qx7BAGA"
+          "current_key": "AIzaSyD5EsYiXRB9OgSC7jTCE00_ezj0zhFszqM"
         }
       ],
       "services": {
