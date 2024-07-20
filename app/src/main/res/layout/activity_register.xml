@@ -39,7 +39,9 @@
                     android:id="@+id/emTvR"
                     android:layout_width="88dp"
                     android:layout_height="wrap_content"
-                    android:text="Email" />
+                    android:text="Email"
+                    android:textColor="#000000"
+                    android:textStyle="bold" />
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/em"
@@ -60,7 +62,9 @@
                     android:id="@+id/pswTvR"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Password" />
+                    android:text="Password"
+                    android:textColor="#000000"
+                    android:textStyle="bold" />
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/psw"
@@ -80,7 +84,9 @@
                     android:id="@+id/pswCfmTvR"
                     android:layout_width="137dp"
                     android:layout_height="wrap_content"
-                    android:text="Confirm Password" />
+                    android:text="Confirm Password"
+                    android:textColor="#000000"
+                    android:textStyle="bold" />
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/pswCfm"

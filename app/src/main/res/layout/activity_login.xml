@@ -21,6 +21,7 @@
             android:textSize="34sp"
             android:textStyle="bold" />
 
+
         <Space
             android:layout_width="match_parent"
             android:layout_height="80dp" />
@@ -39,7 +40,9 @@
                     android:id="@+id/emTvL"
                     android:layout_width="88dp"
                     android:layout_height="wrap_content"
-                    android:text="Email" />
+                    android:text="Email"
+                    android:textColor="#000000"
+                    android:textStyle="bold" />
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/em"
@@ -60,7 +63,9 @@
                     android:id="@+id/pswTvL"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Password" />
+                    android:text="Password"
+                    android:textColor="#000000"
+                    android:textStyle="bold" />
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/psw"
