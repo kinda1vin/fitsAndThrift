@@ -1,34 +1,29 @@
 package com.sp.fitsandthrift;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.provider.MediaStore;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.provider.MediaStore;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class uploadItem extends AppCompatActivity {
 
@@ -43,7 +38,6 @@ public class uploadItem extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.uploadpage);
 
@@ -57,46 +51,33 @@ public class uploadItem extends AppCompatActivity {
 
         imgbutton = (ImageButton)findViewById(R.id.imgbutton);
         imgbutton.setOnClickListener(onUpload);
-
-
     }
 
     private View.OnClickListener onSave = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
             String brandnamestr = brandname.getText().toString();
             String sizestr = size.getText().toString();
             String colorstr = color.getText().toString();
             String conditionstr = condition.getText().toString();
 
-            String combinestr = brandnamestr + "\n" + sizestr + "\n" + colorstr + "\n" + conditionstr;
-            if(brandnamestr.isEmpty() || sizestr.isEmpty() || colorstr.isEmpty() || conditionstr.isEmpty()) {
+            if (TextUtils.isEmpty(brandnamestr) || TextUtils.isEmpty(sizestr) || TextUtils.isEmpty(colorstr) || TextUtils.isEmpty(conditionstr)) {
                 Toast.makeText(getApplicationContext(), "Please fill up the details", Toast.LENGTH_LONG).show();
-            } else if(imageUri==null){
-                Toast.makeText(getApplicationContext(),"Please upload the photo from gallery", Toast.LENGTH_LONG).show();
+            } else if (imageUri == null) {
+                Toast.makeText(getApplicationContext(), "Please upload the photo from gallery", Toast.LENGTH_LONG).show();
+            } else {
+                Intent intent = new Intent();
+                intent.putExtra("itemdesc", brandnamestr);
+                intent.putExtra("imageUri", imageUri.toString());
+                setResult(RESULT_OK, intent);
+                finish();
             }
-            else{
-                Trade_fragment tradeFragment = new Trade_fragment();
-                Bundle args = new Bundle();
-                args.putString("itemdesc", brandnamestr);
-                args.putString("imageUri", imageUri.toString());
-                tradeFragment.setArguments(args);
-
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, tradeFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
-            }
-
-
         }
     };
 
-    private  View.OnClickListener onUpload = new View.OnClickListener() {
+    private View.OnClickListener onUpload = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
             Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(gallery, PICK_IMAGE);
         }
@@ -112,7 +93,6 @@ public class uploadItem extends AppCompatActivity {
             }
         }
     }
-
 
     public static class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
@@ -152,7 +132,6 @@ public class uploadItem extends AppCompatActivity {
                 imageUri = itemView.findViewById(R.id.imageUri);
                 itemdesc = itemView.findViewById(R.id.itemdesc);
             }
-
         }
     }
 }

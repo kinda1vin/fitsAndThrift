@@ -1,19 +1,26 @@
 package com.sp.fitsandthrift.Firebase;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 
 public class Util {
-    private static final String USER_COLLECTION = "users"; // Replace with your actual collection name
 
-    public static DocumentReference currentUserDetails() {
-        String userID = FirebaseAuth.getInstance().getCurrentUser() != null ? FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
-        if (userID == null || userID.isEmpty()) {
-            throw new IllegalArgumentException("User ID must not be null or empty");
-        }
-        return FirebaseFirestore.getInstance().collection(USER_COLLECTION).document(userID);
+    public static String currentUserId(){
+        return FirebaseAuth.getInstance().getUid();
+    }
+    public static DocumentReference currentUserDetails(){
+        return FirebaseFirestore.getInstance().collection("users").document(currentUserId());
     }
 
-
+    public static StorageReference  getCurrentProfilePicStorageRef(){
+        return FirebaseStorage.getInstance().getReference().child("profile_pic")
+                .child(Util.currentUserId());
+    }
 }
+

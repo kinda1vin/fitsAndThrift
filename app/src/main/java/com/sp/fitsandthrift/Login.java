@@ -1,6 +1,5 @@
 package com.sp.fitsandthrift;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -11,11 +10,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.FirebaseApp;
-import com.sp.fitsandthrift.model.Usermodel;
-import com.sp.fitsandthrift.Firebase.Util;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.sp.fitsandthrift.model.Usermodel;
 
 public class Login extends AppCompatActivity {
     private TextInputEditText editTextEmail, editTextPassword;
@@ -29,7 +34,6 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        FirebaseApp.initializeApp(this);
         mAuth = FirebaseAuth.getInstance();
 
         editTextEmail = findViewById(R.id.em);
@@ -71,8 +75,7 @@ public class Login extends AppCompatActivity {
                     .addOnCompleteListener(task -> {
                         progressBar.setVisibility(View.GONE);
                         if (task.isSuccessful()) {
-                            Toast.makeText(Login.this, R.string.welcome, Toast.LENGTH_SHORT).show();
-                            getUserDetailsAndProceed();
+                            checkUserDetails();
                         } else {
                             Toast.makeText(Login.this, R.string.login_failed, Toast.LENGTH_SHORT).show();
                         }
@@ -80,15 +83,21 @@ public class Login extends AppCompatActivity {
         });
     }
 
-    //getting email from userinput to display at the profile page
-    private void getUserDetailsAndProceed() {
-        Util.currentUserDetails().get().addOnCompleteListener(task -> {
+    private void checkUserDetails() {
+        String userId = mAuth.getCurrentUser().getUid();
+        DocumentReference userRef = FirebaseFirestore.getInstance().collection("users").document(userId);
+        userRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                usermodel = task.getResult().toObject(Usermodel.class);
-                if (usermodel != null) {
-                    Intent intent = new Intent(Login.this, MainActivity.class);
-                    intent.putExtra("email", usermodel.getEmail());
-                    startActivity(intent);
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    usermodel = document.toObject(Usermodel.class);
+                    if (usermodel != null && !usermodel.isDetailsProvided()) {
+                        Intent intent = new Intent(Login.this, user_details.class);
+                        startActivity(intent);
+                    } else {
+                        Intent intent = new Intent(Login.this, MainActivity.class);
+                        startActivity(intent);
+                    }
                     finish();
                 } else {
                     Toast.makeText(Login.this, "Failed to get user details.", Toast.LENGTH_SHORT).show();
@@ -99,3 +108,4 @@ public class Login extends AppCompatActivity {
         });
     }
 }
+

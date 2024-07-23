@@ -74,6 +74,19 @@
             android:hint="Phone Number"
             android:inputType="text" />
 
+        <!-- Add the password field here -->
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginVertical="10dp"
+            android:background="@drawable/round_corners_bg"
+            android:ems="10"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:paddingVertical="10dp" />
+
         <Button
             android:id="@+id/save_btn"
             android:layout_width="wrap_content"
