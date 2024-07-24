@@ -21,7 +21,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
-import com.sp.fitsandthrift.Firebase.Util;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.sp.fitsandthrift.model.Usermodel;
 
 public class Register extends AppCompatActivity {
@@ -31,6 +31,7 @@ public class Register extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private TextView loginNow;
     private ProgressBar progressBar;
+    private FirebaseFirestore db;
 
     @Override
     public void onStart() {
@@ -43,6 +44,7 @@ public class Register extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         editTextEmail = findViewById(R.id.em);
         editTextPassword = findViewById(R.id.psw);
@@ -58,44 +60,12 @@ public class Register extends AppCompatActivity {
         });
 
         btnRegister.setOnClickListener(v -> {
-            String name,phone,gender=null;
             progressBar.setVisibility(View.VISIBLE);
-            String email = editTextEmail.getText().toString();
-            String password = editTextPassword.getText().toString();
-            String cfmPsw = cfmPassword.getText().toString();
+            String email = editTextEmail.getText().toString().trim();
+            String password = editTextPassword.getText().toString().trim();
+            String cfmPsw = cfmPassword.getText().toString().trim();
 
-            if (TextUtils.isEmpty(email)) {
-                editTextEmail.setError(getString(R.string.email_empty_error));
-                progressBar.setVisibility(View.GONE);
-                return;
-            }
-
-            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                editTextEmail.setError(getString(R.string.email_invalid_error));
-                progressBar.setVisibility(View.GONE);
-                return;
-            }
-
-            if (TextUtils.isEmpty(password)) {
-                editTextPassword.setError(getString(R.string.password_empty_error));
-                progressBar.setVisibility(View.GONE);
-                return;
-            }
-
-            if (password.length() < 6) {
-                editTextPassword.setError(getString(R.string.password_length_error));
-                progressBar.setVisibility(View.GONE);
-                return;
-            }
-
-            if (TextUtils.isEmpty(cfmPsw)) {
-                cfmPassword.setError(getString(R.string.cfm_password_empty_error));
-                progressBar.setVisibility(View.GONE);
-                return;
-            }
-
-            if (!password.equals(cfmPsw)) {
-                cfmPassword.setError(getString(R.string.password_mismatch_error));
+            if (!validateInput(email, password, cfmPsw)) {
                 progressBar.setVisibility(View.GONE);
                 return;
             }
@@ -104,31 +74,68 @@ public class Register extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     progressBar.setVisibility(View.GONE);
-                    if (task.isSuccessful()) { //
-                        Usermodel usermodel = new Usermodel(email);// create a new user model in database when signin process is successful
-                        Util.currentUserDetails().set(usermodel).addOnCompleteListener(userTask -> {
-                            if (userTask.isSuccessful()) {
-                                Log.d(TAG, "User document added to Firestore");
-                                Toast.makeText(Register.this, R.string.account_created, Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(getApplicationContext(), Login.class);
-                                startActivity(intent);
-                                finish();
-                            } else {
-                                Log.e(TAG, "Failed to add user document to Firestore", userTask.getException());
-                                Toast.makeText(Register.this, R.string.registration_failed, Toast.LENGTH_SHORT).show();
+                    if (task.isSuccessful()) {
+                        String userId = mAuth.getCurrentUser().getUid();
+                        Usermodel usermodel = new Usermodel(email);
+                        db.collection("users").document(userId).set(usermodel).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(Register.this, "Registration successful! Please log in.", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(getApplicationContext(), Login.class);
+                                    startActivity(intent);
+                                    finish();
+                                } else {
+                                    Log.e(TAG, "Error creating user model: ", task.getException());
+                                    Toast.makeText(Register.this, "Registration failed. Please try again.", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         });
                     } else {
                         if (task.getException() instanceof FirebaseAuthUserCollisionException) {
                             Log.e(TAG, "Email already in use", task.getException());
-                            Toast.makeText(Register.this, R.string.email_already_in_use, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Register.this, "Email already in use.", Toast.LENGTH_SHORT).show();
                         } else {
                             Log.e(TAG, "Registration failed", task.getException());
-                            Toast.makeText(Register.this, R.string.registration_failed, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Register.this, "Registration failed.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
             });
         });
+    }
+
+    private boolean validateInput(String email, String password, String cfmPsw) {
+        if (TextUtils.isEmpty(email)) {
+            editTextEmail.setError("Email is required");
+            return false;
+        }
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            editTextEmail.setError("Invalid email");
+            return false;
+        }
+
+        if (TextUtils.isEmpty(password)) {
+            editTextPassword.setError("Password is required");
+            return false;
+        }
+
+        if (password.length() < 6) {
+            editTextPassword.setError("Password must be at least 6 characters");
+            return false;
+        }
+
+        if (TextUtils.isEmpty(cfmPsw)) {
+            cfmPassword.setError("Confirm your password");
+            return false;
+        }
+
+        if (!password.equals(cfmPsw)) {
+            cfmPassword.setError("Passwords do not match");
+            return false;
+        }
+
+        return true;
     }
 }

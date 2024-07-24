@@ -11,4 +11,6 @@
     <string name="email_already_in_use">An account with this email already exists</string>
     <string name="welcome">Welcome!</string>
     <string name="login_failed">Incorrect email or password!</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
