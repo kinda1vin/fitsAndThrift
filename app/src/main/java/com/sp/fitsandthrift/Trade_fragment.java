@@ -67,6 +67,7 @@ public class Trade_fragment extends Fragment {
         }
 
         recyclerView.setAdapter(itemAdapter);
+        recyclerView.setVisibility(View.GONE);
 
         return view;
     }
@@ -91,6 +92,9 @@ public class Trade_fragment extends Fragment {
                 if (description != null && itemphoto != null) {
                     Uri imageUri = Uri.parse(itemphoto);
                     itemList.add(new Item(description, imageUri));
+                    if (itemList.size()==1) {
+                        recyclerView.setVisibility(View.VISIBLE);
+                    }
                     itemAdapter.notifyItemInserted(itemList.size() - 1);
                 }
             }

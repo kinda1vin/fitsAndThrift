@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseUser user;
 
-    Home_fragment homeFragment;
+    Home_Fragment homeFragment;
     about_fragment aboutFragment;
     me_fragment meFragment;
     notification_fragment notificationFragment;
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
 
-        homeFragment = new Home_fragment();
+        homeFragment = new Home_Fragment();
         aboutFragment = new about_fragment();
         meFragment = new me_fragment();
         notificationFragment = new notification_fragment();
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView.setSelectedItemId(R.id.home);
 
         // Set default fragment
-        loadFragment(new Home_fragment(), true);
+        loadFragment(new Home_Fragment(), true);
 
         bottomNavigationView.getMenu().findItem(R.id.home).setIcon(R.drawable.home1);
 
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                 resetIcons();
 
                 if (itemId == R.id.home) {
-                    loadFragment(new Home_fragment(), false);
+                    loadFragment(new Home_Fragment(), false);
                     item.setIcon(R.drawable.home1); // Change to selected icon
                 } else if (itemId == R.id.trade) {
                     loadFragment(new Trade_fragment(), false);
