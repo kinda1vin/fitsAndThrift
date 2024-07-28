@@ -37,7 +37,7 @@ public class SearchUser extends AppCompatActivity {
         searchUser.requestFocus();
 
         backBtn.setOnClickListener(v -> {
-            getOnBackPressedDispatcher().onBackPressed();
+            onBackPressed();
         });
 
         searchChat.setOnClickListener(v -> {
@@ -87,5 +87,14 @@ public class SearchUser extends AppCompatActivity {
         super.onResume();
         if(adapter != null)
             adapter.startListening();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("loadChatFragment", true);
+        startActivity(intent);
+        finish();
     }
 }

@@ -68,8 +68,17 @@ public class MainActivity extends AppCompatActivity {
         // Set default selected item
         bottomNavigationView.setSelectedItemId(R.id.home);
 
+
         // Set default fragment
-        loadFragment(new Home_Fragment(), true);
+
+        boolean loadChatFragment = getIntent().getBooleanExtra("loadChatFragment", false);
+        if (loadChatFragment) {
+            bottomNavigationView.setSelectedItemId(R.id.chat);
+            loadFragment(new ChatFragment(), true);
+        } else {
+            bottomNavigationView.setSelectedItemId(R.id.home);
+            loadFragment(new Home_Fragment(), true);
+        }
 
         bottomNavigationView.getMenu().findItem(R.id.home).setIcon(R.drawable.home1);
 
