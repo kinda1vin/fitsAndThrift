@@ -113,7 +113,6 @@ public class editprofile extends AppCompatActivity {
                     if (currentusermodel != null) {
                         editTextName.setText(currentusermodel.getUsername());
                         editTextGmail.setText(currentusermodel.getEmail());
-                        editTextGender.setText(currentusermodel.getGender());
                         editTextph.setText(currentusermodel.getPhoneNumber());
                         if (!TextUtils.isEmpty(currentusermodel.getProfilePicUrl())) {
                             Uri profilePicUri = Uri.parse(currentusermodel.getProfilePicUrl());
@@ -146,7 +145,6 @@ public class editprofile extends AppCompatActivity {
 
         currentusermodel.setUsername(name);
         currentusermodel.setEmail(gmail);
-        currentusermodel.setGender(gender);
         currentusermodel.setPhoneNumber(phone);
 
         FirebaseUser user = mAuth.getCurrentUser();

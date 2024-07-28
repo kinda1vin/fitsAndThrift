@@ -34,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     Home_Fragment homeFragment;
     about_fragment aboutFragment;
     me_fragment meFragment;
+
+    ChatFragment chatFragment;
     notification_fragment notificationFragment;
     review_fragment reviewFragment;
     Trade_fragment tradeFragment;
@@ -58,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         notificationFragment = new notification_fragment();
         reviewFragment = new review_fragment();
         tradeFragment = new Trade_fragment();
+        chatFragment = new ChatFragment();
 
         bottomNavigationView = findViewById(R.id.nav);
         frame = findViewById(R.id.frame);
@@ -86,6 +89,9 @@ public class MainActivity extends AppCompatActivity {
                 } else if (itemId == R.id.noti) {
                     loadFragment(new notification_fragment(), false);
                     item.setIcon(R.drawable.bell); // Change to selected icon
+                } else if (itemId == R.id.chat) {
+                    loadFragment(new ChatFragment(), false);
+                    item.setIcon(R.drawable.cmt); // Change to selected icon
                 } else if (itemId == R.id.me) {
                     String email = user.getEmail();
                     me_fragment meFragment = me_fragment.newInstance("", email); // Pass the email
@@ -131,11 +137,14 @@ public class MainActivity extends AppCompatActivity {
         MenuItem tradeItem = bottomNavigationView.getMenu().findItem(R.id.trade);
         MenuItem notiItem = bottomNavigationView.getMenu().findItem(R.id.noti);
         MenuItem meItem = bottomNavigationView.getMenu().findItem(R.id.me);
+        MenuItem chatItem = bottomNavigationView.getMenu().findItem(R.id.chat);
 
         homeItem.setIcon(R.drawable.home); // Default icon for home
         tradeItem.setIcon(R.drawable.trade); // Default icon for trade
         notiItem.setIcon(R.drawable.noti); // Default icon for notification
         meItem.setIcon(R.drawable.profile1); // Default icon for me
+        chatItem.setIcon(R.drawable.chat); // Default icon for chat
+
     }
 
 }
