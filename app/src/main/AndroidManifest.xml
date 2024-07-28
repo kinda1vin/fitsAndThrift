@@ -16,7 +16,10 @@
         android:theme="@style/Theme.MyApplication"
         tools:targetApi="31">
         <activity
-            android:name=".user_details"
+            android:name=".SubmitOTP"
+            android:exported="false" />
+        <activity
+            android:name=".Get_otp"
             android:exported="false" />
         <activity
             android:name=".uploadItem"

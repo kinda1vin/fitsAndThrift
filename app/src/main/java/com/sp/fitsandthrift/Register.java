@@ -26,7 +26,7 @@ import com.sp.fitsandthrift.model.Usermodel;
 
 public class Register extends AppCompatActivity {
 
-    private TextInputEditText editTextEmail, editTextPassword, cfmPassword;
+    private TextInputEditText editTextUsername, editTextEmail, editTextPassword, cfmPassword;
     private Button btnRegister;
     private FirebaseAuth mAuth;
     private TextView loginNow;
@@ -46,6 +46,7 @@ public class Register extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
+        editTextUsername = findViewById(R.id.registername);
         editTextEmail = findViewById(R.id.em);
         editTextPassword = findViewById(R.id.psw);
         cfmPassword = findViewById(R.id.pswCfm);
@@ -61,11 +62,13 @@ public class Register extends AppCompatActivity {
 
         btnRegister.setOnClickListener(v -> {
             progressBar.setVisibility(View.VISIBLE);
+            String username = editTextUsername.getText().toString().trim();
             String email = editTextEmail.getText().toString().trim();
             String password = editTextPassword.getText().toString().trim();
             String cfmPsw = cfmPassword.getText().toString().trim();
+            String phoneNumber = getIntent().getStringExtra("phoneNumber");
 
-            if (!validateInput(email, password, cfmPsw)) {
+            if (!validateInput(username, email, password, cfmPsw)) {
                 progressBar.setVisibility(View.GONE);
                 return;
             }
@@ -76,15 +79,15 @@ public class Register extends AppCompatActivity {
                     progressBar.setVisibility(View.GONE);
                     if (task.isSuccessful()) {
                         String userId = mAuth.getCurrentUser().getUid();
-                        Usermodel usermodel = new Usermodel(email);
+                        Usermodel usermodel = new Usermodel(username, email, phoneNumber, userId);
                         db.collection("users").document(userId).set(usermodel).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
-                                    Toast.makeText(Register.this, "Registration successful! Please log in.", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(getApplicationContext(), Login.class);
-                                    startActivity(intent);
-                                    finish();
+                                    Toast.makeText(Register.this, "Registration successful! Please Submit your OTP.", Toast.LENGTH_SHORT).show();
+                                    Intent intentSubmitOTP = new Intent(Register.this, SubmitOTP.class);
+                                    intentSubmitOTP.putExtra("phoneNumber", phoneNumber);
+                                    startActivity(intentSubmitOTP);
                                 } else {
                                     Log.e(TAG, "Error creating user model: ", task.getException());
                                     Toast.makeText(Register.this, "Registration failed. Please try again.", Toast.LENGTH_SHORT).show();
@@ -105,7 +108,12 @@ public class Register extends AppCompatActivity {
         });
     }
 
-    private boolean validateInput(String email, String password, String cfmPsw) {
+    private boolean validateInput(String username, String email, String password, String cfmPsw) {
+        if (TextUtils.isEmpty(username)) {
+            editTextUsername.setError("Username is required");
+            return false;
+        }
+
         if (TextUtils.isEmpty(email)) {
             editTextEmail.setError("Email is required");
             return false;
@@ -137,5 +145,23 @@ public class Register extends AppCompatActivity {
         }
 
         return true;
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        // Get the phone number from the intent
+        String phoneNumber = getIntent().getStringExtra("phoneNumber");
+
+        // Delete the phone number from the verifiedNumbers collection
+        if (phoneNumber != null) {
+            db.collection("verifiedNumbers").document(phoneNumber).delete().addOnCompleteListener(task -> {
+                if (!task.isSuccessful()) {
+                    Log.e(TAG, "Failed to delete phone number.", task.getException());
+                }
+            });
+        }
     }
 }

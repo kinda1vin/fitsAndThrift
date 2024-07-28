@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Get_otp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="162dp"
+            android:layout_height="166dp"
+            android:src="@drawable/my_full_logo" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <LinearLayout
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/input_text">
+
+            <com.hbb20.CountryCodePicker
+                android:id="@+id/countryCode"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                app:ccp_defaultNameCode="SG"
+                app:ccp_showNameCode="false"
+                app:ccp_showPhoneCode="true" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/phoneNum"
+                android:drawableEnd="@drawable/baseline_phone_24"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/input_text"
+                android:ems="10"
+                android:fontFamily="@font/mulish"
+                android:hint="Phone Number"
+                android:inputType="text"
+                android:minHeight="48dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textColorHint="#2C2929"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <Button
+            android:id="@+id/getOTP"
+            android:layout_width="168dp"
+            android:layout_height="wrap_content"
+            android:text="Get OTP"
+            app:cornerRadius="40dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <ProgressBar
+            android:id="@+id/getOTP_progressBar"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:indeterminateTint="@color/fits_n_thrift" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
