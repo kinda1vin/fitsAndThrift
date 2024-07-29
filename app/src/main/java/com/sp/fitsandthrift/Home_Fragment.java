@@ -26,6 +26,10 @@ public class Home_Fragment extends Fragment {
     private boolean isWomenSelected = false;
     private boolean isMenSelected = false;
     private boolean isCartDisplayed = true;
+    private ClothingFragment clothingFragment;
+    private FootWearFragment footWearFragment;
+    private String category = "ALL";
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,6 +42,10 @@ public class Home_Fragment extends Fragment {
         footwearButton = rootView.findViewById(R.id.footwear);
         cartButton = rootView.findViewById(R.id.cart);
 
+        clothingFragment = new ClothingFragment();// initialize the clothing fragment
+        footWearFragment = new FootWearFragment();// initialize the footwear fragment
+
+
         womenTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,9 +57,11 @@ public class Home_Fragment extends Fragment {
             }
         });
 
+
         menTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 // check if men is selected
                 isMenSelected = true;
                 isWomenSelected = false;
@@ -60,46 +70,44 @@ public class Home_Fragment extends Fragment {
             }
         });
 
-        //Navigate to Clothing Activities
-        clothingButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isWomenSelected) {
-                    FragmentManager fragmentManager = getParentFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.fragment_container, new WomenClothingFragment());
-                    fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.commit();
-                }
-                else if (isMenSelected) {
-                    FragmentManager fragmentManager = getParentFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.fragment_container, new MenClothingFragment());
-                    fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.commit();
-                }
+        //Navigate to clothing activities
+        clothingButton.setOnClickListener(v -> {
+            if (isWomenSelected) {
+                category = "Female";
+            } else if (isMenSelected) {
+                category = "Male";
+            } else {
+                category = "All";
             }
+
+            ClothingFragment fragment = new ClothingFragment();
+            Bundle args = new Bundle();
+            args.putString("category", category);
+            fragment.setArguments(args);
+
+            FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, fragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
         });
 
-        //Navigate to Footwear Activities
-        footwearButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isWomenSelected) {
-                    FragmentManager fragmentManager = getParentFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.fragment_container, new WomenFootwearFragment());
-                    fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.commit();
-                }
-                else if (isMenSelected) {
-                    FragmentManager fragmentManager = getParentFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.fragment_container, new MenFootwear());
-                    fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.commit();
-                }
+        // Navigate to Footwear activities
+        footwearButton.setOnClickListener(v -> {
+            if (isWomenSelected) {
+                category = "Female";
+            } else if (isMenSelected) {
+                category = "Male";
+            } else {
+                category = "All";
             }
+            FootWearFragment fragment = new FootWearFragment();
+            Bundle args = new Bundle();
+            args.putString("category", category);
+            fragment.setArguments(args);
+
+            FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, fragment);
+            transaction.commit();
         });
 
         // Navigate to cart
