@@ -3,27 +3,95 @@ package com.sp.fitsandthrift;
 import android.net.Uri;
 
 public class Item {
-    private String itemdesc;
-    private Uri imageUri;
+    String itemDescription;
+    String imageUri;
+    String itemGender;
+    String itemType;
+    String color;
+    String size;
+    String itemCondition;
 
-    public Item(String itemdesc, Uri imageUri) {
-        this.itemdesc = itemdesc;
+    String userID;
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+
+
+    public Item(){}
+
+    public Item(String itemDescription, String imageUri) {
+        this.itemDescription = itemDescription;
         this.imageUri = imageUri;
     }
 
-    public String getItemdesc() {
-        return itemdesc;
+    public String getItemDescription() {
+        return itemDescription;
     }
 
-    public void setItemdesc(String itemdesc){
-        this.itemdesc = itemdesc;
+    public void setItemDescription(String itemDescription) {
+        this.itemDescription = itemDescription;
     }
 
-    public Uri getImageUri() {
+    public String getImageUri() {
         return imageUri;
     }
 
-    public void setImageUri(Uri imageUri){
+    public void setImageUri(String imageUri) {
         this.imageUri = imageUri;
     }
+
+    public String getItemGender() {
+        return itemGender;
+    }
+
+    public void setItemGender(String gender) {
+        this.itemGender = gender;
+    }
+
+    public String getItemType() {
+        return itemType;
+    }
+
+    public void setItemType(String itemType) {
+        this.itemType = itemType;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public String getItemCondition() {
+        return itemCondition;
+    }
+
+    public void setItemCondition(String itemCondition) {
+        this.itemCondition = itemCondition;
+    }
+
+    public Uri getImageUriAsUri(){
+        if (imageUri != null) {
+            return Uri.parse(imageUri);
+        } else {
+            // return null or a default Uri if imageUri is null
+            return null;
+        }
+    }
+
 }

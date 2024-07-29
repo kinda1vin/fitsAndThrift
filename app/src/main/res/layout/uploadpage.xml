@@ -20,20 +20,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TableLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <TableRow
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/textView"
                     android:layout_width="100dp"
                     android:layout_height="50dp"
                     android:text="Trade"
-                    android:textSize="20sp"
+                    android:textColor="#000000"
+                    android:textSize="24sp"
                     android:textStyle="bold" />
 
                 <SearchView
@@ -47,26 +50,48 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     app:srcCompat="@drawable/baseline_shopping_cart_24" />
-            </TableRow>
+            </LinearLayout>
 
-            <TableRow
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/backIcon"
+                    android:layout_width="40dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="5sp"
+                    android:layout_marginEnd="5sp"
+                    app:srcCompat="@drawable/baseline_arrow_back_ios_new_24" />
+
+                <TextView
+                    android:id="@+id/textView9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Back"
+                    android:textColor="#000000"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/textView2"
                     android:layout_width="match_parent"
-                    android:layout_height="45dp"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:paddingBottom="10dp"
                     android:text="Upload item Photo"
-                    android:textSize="15sp" />
-            </TableRow>
-
-        </TableLayout>
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
 
         <ImageButton
             android:id="@+id/imgbutton"
             android:layout_width="match_parent"
             android:layout_height="200dp"
+            android:background="#FCFBFA"
             android:scaleType="fitCenter"
             android:src="@drawable/itemupload" />
 
@@ -83,6 +108,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Details"
+                    android:textColor="#000000"
                     android:textSize="20sp"
                     android:textStyle="bold" />
             </TableRow>
@@ -96,10 +122,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Item description"
-                    android:textSize="15sp" />
+                    android:textColor="#000000"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
                 <EditText
-                    android:id="@+id/brandname"
+                    android:id="@+id/itemDescription"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -115,7 +143,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Color"
-                    android:textSize="15sp" />
+                    android:textColor="#000000"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/color"
@@ -134,7 +164,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Size"
-                    android:textSize="15sp" />
+                    android:textColor="#000000"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/size"
@@ -153,10 +185,52 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Item condition"
-                    android:textSize="15sp" />
+                    android:textColor="#000000"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
                 <EditText
-                    android:id="@+id/condition"
+                    android:id="@+id/itemCondition"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="text" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <TextView
+                    android:id="@+id/textview9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Gender"
+                    android:textColor="#000000"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/itemGender"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="text" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <TextView
+                    android:id="@+id/textview10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Item type"
+                    android:textColor="#000000"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/itemType"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ems="10"
