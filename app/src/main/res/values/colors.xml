@@ -8,4 +8,7 @@
 
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
+
+    <color name="chat_color_sender">#007AFF</color>
+    <color name="chat_color_receiver">#A6AE93</color>
 </resources>
