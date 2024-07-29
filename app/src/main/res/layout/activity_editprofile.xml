@@ -7,23 +7,24 @@
     tools:context=".editprofile">
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_marginTop="16dp"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginBottom="16dp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@id/fragment_container1"
-        android:layout_marginBottom="16dp">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/pic"
-            android:layout_width="169dp"
-            android:layout_height="170dp"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
             android:layout_gravity="center"
             android:layout_marginTop="30dp"
             android:paddingHorizontal="20dp"
             android:paddingVertical="15dp"
-            app:srcCompat="@drawable/pic" />
+            app:srcCompat="@drawable/profile" />
 
         <EditText
             android:id="@+id/newname"
@@ -37,18 +38,6 @@
             android:hint="Name"
             android:inputType="text"
             android:paddingVertical="10dp" />
-
-        <EditText
-            android:id="@+id/newmail"
-            android:layout_width="300dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:layout_marginVertical="10dp"
-            android:background="@drawable/round_corners_bg"
-            android:drawableEnd="@drawable/baseline_email_24"
-            android:ems="10"
-            android:hint="Mail"
-            android:inputType="text" />
 
         <EditText
             android:id="@+id/gender"
@@ -75,17 +64,6 @@
             android:inputType="text" />
 
         <!-- Add the password field here -->
-        <EditText
-            android:id="@+id/password"
-            android:layout_width="300dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:layout_marginVertical="10dp"
-            android:background="@drawable/round_corners_bg"
-            android:ems="10"
-            android:hint="Password"
-            android:inputType="textPassword"
-            android:paddingVertical="10dp" />
 
         <Button
             android:id="@+id/save_btn"
@@ -113,4 +91,16 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/profile_progress_bar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintVertical_bias="0.166" />
 </androidx.constraintlayout.widget.ConstraintLayout>

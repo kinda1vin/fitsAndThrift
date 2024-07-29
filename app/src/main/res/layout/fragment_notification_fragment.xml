@@ -5,12 +5,8 @@
     android:layout_height="match_parent"
     tools:context=".notification_fragment">
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Noti Fragment"
-        android:textSize="25sp"
-        android:textStyle="bold" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/notirecycle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </FrameLayout>

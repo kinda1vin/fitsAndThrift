@@ -7,6 +7,7 @@ import com.sp.fitsandthrift.Firebase.Util;
 
 public class Usermodel {
     private Timestamp createdTimestamp;
+    private String gender;
     private String email;
     private String username;
     private String phoneNumber;
@@ -31,10 +32,12 @@ public class Usermodel {
         this.currentUserId = currentUserId;
     }
 
-    public Usermodel(String username, String email, String phoneNumber, String currentUserId) {
+    public Usermodel(String username, String email, String phoneNumber, String currentUserId,String gender) {
         this.username = username;
         this.email = email;
         this.phoneNumber = phoneNumber;
+        this.currentUserId= currentUserId;
+        this.gender= gender;
     }
 
 
@@ -78,6 +81,14 @@ public class Usermodel {
 
     public void setProfilePicUrl(String profilePicUrl) {
         this.profilePicUrl = profilePicUrl;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 }
 

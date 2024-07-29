@@ -1,51 +1,58 @@
 package com.sp.fitsandthrift;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+
 public class about_fragment extends Fragment {
-    private String mail;
-    private String phone;
+
+    private TextView mailTextView;
+    private TextView phoneTextView;
+
+    public about_fragment() {
+        // Required empty public constructor
+    }
+
+    public static about_fragment newInstance(String email, String phone) {
+        about_fragment fragment = new about_fragment();
+        Bundle args = new Bundle();
+        args.putString("mail", email);
+        args.putString("phone", phone);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mail = getArguments().getString("mail");
-            phone = getArguments().getString("phone");
+            updateDetails(getArguments().getString("mail"), getArguments().getString("phone"));
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_about_fragment, container, false);
-        TextView mailtext = view.findViewById(R.id.gmail1);
-        TextView phonetext = view.findViewById(R.id.phone);
-        mailtext.setText(mail);
-        phonetext.setText(phone);
+        mailTextView = view.findViewById(R.id.gmail1);
+        phoneTextView = view.findViewById(R.id.phone);
+
+        // Refresh views with the latest arguments if available
+        if (getArguments() != null) {
+            updateDetails(getArguments().getString("mail"), getArguments().getString("phone"));
+        }
+
         return view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        updateUI();
-    }
-
-    private void updateUI() {
-        if (getView() != null) {
-            TextView mailtext = getView().findViewById(R.id.gmail1);
-            TextView phonetext = getView().findViewById(R.id.phone);
-            mailtext.setText(mail);
-            phonetext.setText(phone);
+    // Method to update details dynamically
+    public void updateDetails(String email, String phone) {
+        if (mailTextView != null && phoneTextView != null) {
+            mailTextView.setText(email);
+            phoneTextView.setText(phone);
         }
     }
 }

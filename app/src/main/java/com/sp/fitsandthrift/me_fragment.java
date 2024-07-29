@@ -1,10 +1,12 @@
 package com.sp.fitsandthrift;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -25,148 +29,140 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.sp.fitsandthrift.model.Usermodel;
 
 public class me_fragment extends Fragment {
+    private static final String ARG_EMAIL = "email";
 
-    private static final String ARG_NAME = "name";
-    private static final String ARG_MAIL = "mail";
+    private ImageView profilePic;
+    private TextView usernameTextView, emailTextView;
+    private Button editProfileButton, logoutButton;
 
-    private String name;
-    private String mail;
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
 
-    private TabHost host;
-    private ImageView profilepic;
-    private Button editProfile;
-    private Button logout;
-
-    private Usermodel usermodel;
-
-    public static me_fragment newInstance(String name, String mail) {
+    // Updated newInstance method to handle email parameter correctly
+    public static me_fragment newInstance(String email) {
         me_fragment fragment = new me_fragment();
         Bundle args = new Bundle();
-        args.putString(ARG_NAME, name);
-        args.putString(ARG_MAIL, mail);
+        args.putString(ARG_EMAIL, email);
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            name = getArguments().getString(ARG_NAME);
-            mail = getArguments().getString(ARG_MAIL);
-        }
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
     }
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_me_fragment, container, false);
-        TextView gmailTextView = view.findViewById(R.id.gmail1);
-        TextView nameTextView = view.findViewById(R.id.username1);
-        profilepic = view.findViewById(R.id.imageView);
+        initializeViews(view);
+        setupTabHost(view);
+        if (getArguments() != null) {
+            String email = getArguments().getString(ARG_EMAIL);
+            emailTextView.setText(email); // Set the email directly if it's passed via newInstance
+        }
+        loadUserData();
+        return view;
+    }
 
-        editProfile = view.findViewById(R.id.editprofile);
-        logout = view.findViewById(R.id.btnLogout);
+    private void initializeViews(View view) {
+        profilePic = view.findViewById(R.id.imageView);
+        usernameTextView = view.findViewById(R.id.username1);
+        emailTextView = view.findViewById(R.id.gmail1);
+        editProfileButton = view.findViewById(R.id.editprofile);
+        logoutButton = view.findViewById(R.id.btnLogout);
 
-        logout.setOnClickListener(v -> {
+        logoutButton.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
-            Intent intent = new Intent(getContext(), Login.class);
-            startActivity(intent);
+            startActivity(new Intent(getActivity(), Login.class));
             getActivity().finish();
         });
 
-        editProfile.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), editprofile.class);
-            startActivityForResult(intent, 1); // Use requestCode 1
-        });
+        editProfileButton.setOnClickListener(v -> startActivityForResult(new Intent(getActivity(), editprofile.class), 1));
+    }
 
-        // Initialize TabHost
-        host = view.findViewById(R.id.tabhost);
+    private void setupTabHost(View view) {
+        TabHost host = view.findViewById(R.id.tabhost);
         host.setup();
 
-        // Create "Reviews" tab
         TabHost.TabSpec spec = host.newTabSpec("Reviews");
         spec.setContent(R.id.review_tab);
         spec.setIndicator("Reviews");
         host.addTab(spec);
 
-        // Create "About" tab
         spec = host.newTabSpec("About");
         spec.setContent(R.id.about_tab);
         spec.setIndicator("About");
         host.addTab(spec);
 
         loadReviewFragment();
+    }
 
-        // Load user data when the view is created
-        loadUserData(view);
+    private void loadUserData() {
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DocumentReference userRef = db.collection("users").document(userId);
+        userRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    Usermodel usermodel = document.toObject(Usermodel.class);
+                    updateUI(usermodel);
+                } else {
+                    Log.e("me_fragment", "No such document");
+                }
+            } else {
+                Log.e("me_fragment", "Failed to load user data", task.getException());
+            }
+        });
+    }
 
-        return view;
+    private void updateUI(Usermodel usermodel) {
+        usernameTextView.setText(usermodel.getUsername());
+        if (!TextUtils.isEmpty(usermodel.getProfilePicUrl())) {
+            Uri profilePicUri = Uri.parse(usermodel.getProfilePicUrl());
+            setProfilePic(getActivity(), profilePicUri, profilePic);
+        }
+        updateAboutFragment(usermodel.getEmail(), usermodel.getPhoneNumber());
+    }
+
+    private void updateAboutFragment(String email, String phone) {
+        about_fragment aboutFragment = (about_fragment) getChildFragmentManager().findFragmentById(R.id.about_tab);
+        if (aboutFragment != null) {
+            aboutFragment.updateDetails(email, phone);
+        } else {
+            aboutFragment = new about_fragment();
+            Bundle args = new Bundle();
+            args.putString("mail", email);
+            args.putString("phone", phone);
+            aboutFragment.setArguments(args);
+            FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+            transaction.replace(R.id.about_tab, aboutFragment);
+            transaction.commit();
+        }
+    }
+
+    private void loadReviewFragment() {
+        review_fragment reviewFragment = new review_fragment();
+        getChildFragmentManager().beginTransaction().replace(R.id.review_tab, reviewFragment).commit();
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
-            // Reload user data when returning from edit profile activity
-            loadUserData(getView());
+            loadUserData(); // Reload user data when returning from edit profile activity
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        // Reload user data when fragment is resumed
-        loadUserData(getView());
+        loadUserData(); // Ensure updated data is shown upon returning
     }
 
-    private void loadUserData(View view) {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DocumentReference userRef = FirebaseFirestore.getInstance().collection("users").document(userId);
-        userRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                DocumentSnapshot document = task.getResult();
-                if (document.exists()) {
-                    usermodel = document.toObject(Usermodel.class);
-                    if (usermodel != null) {
-                        TextView gmailTextView = view.findViewById(R.id.gmail1);
-                        TextView nameTextView = view.findViewById(R.id.username1);
-
-                        gmailTextView.setText(usermodel.getEmail());
-                        nameTextView.setText(usermodel.getUsername());
-
-                        if (!TextUtils.isEmpty(usermodel.getProfilePicUrl())) {
-                            Uri profilePicUri = Uri.parse(usermodel.getProfilePicUrl());
-                            profilepic.setImageURI(profilePicUri);
-                        }
-
-                        // Update the AboutFragment with the new details
-                        updateAboutFragment(usermodel.getEmail(), usermodel.getPhoneNumber());
-                    }
-                } else {
-                    // Handle the case where the document doesn't exist
-                }
-            } else {
-                // Handle the task failure
-            }
-        });
-    }
-
-    private void loadReviewFragment() {
-        getChildFragmentManager().beginTransaction().replace(R.id.review_tab, new review_fragment()).commitAllowingStateLoss();
-    }
-
-    private void updateAboutFragment(String email, String phone) {
-        about_fragment aboutFragment = new about_fragment();
-        Bundle args = new Bundle();
-        args.putString("mail", email);
-        args.putString("phone", phone);
-        aboutFragment.setArguments(args);
-
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.replace(R.id.about_tab, aboutFragment);
-        transaction.commitAllowingStateLoss();
+    public static void setProfilePic(Context context, Uri imageUri, ImageView imageView) {
+        Glide.with(context).load(imageUri).apply(RequestOptions.circleCropTransform()).into(imageView);
     }
 }

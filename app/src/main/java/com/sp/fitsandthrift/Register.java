@@ -67,6 +67,7 @@ public class Register extends AppCompatActivity {
             String password = editTextPassword.getText().toString().trim();
             String cfmPsw = cfmPassword.getText().toString().trim();
             String phoneNumber = getIntent().getStringExtra("phoneNumber");
+            String gender="";
 
             if (!validateInput(username, email, password, cfmPsw)) {
                 progressBar.setVisibility(View.GONE);
@@ -79,7 +80,7 @@ public class Register extends AppCompatActivity {
                     progressBar.setVisibility(View.GONE);
                     if (task.isSuccessful()) {
                         String userId = mAuth.getCurrentUser().getUid();
-                        Usermodel usermodel = new Usermodel(username, email, phoneNumber, userId);
+                        Usermodel usermodel = new Usermodel(username, email, phoneNumber, userId,gender);
                         db.collection("users").document(userId).set(usermodel).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.List;
 
@@ -102,15 +104,18 @@ public class MainActivity extends AppCompatActivity {
                     loadFragment(new ChatFragment(), false);
                     item.setIcon(R.drawable.cmt); // Change to selected icon
                 } else if (itemId == R.id.me) {
-                    String email = user.getEmail();
-                    me_fragment meFragment = me_fragment.newInstance("", email); // Pass the email
-                    loadFragment(meFragment, false);
-                    item.setIcon(R.drawable.activeprofile); // Change to selected icon
+                    if (user != null) {
+                        String email = user.getEmail();
+                        me_fragment meFragment = me_fragment.newInstance(email);
+                        loadFragment(meFragment, false);
+                        item.setIcon(R.drawable.activeprofile);
+                    }
                 }
 
                 return true;
             }
         });
+        getFCMToken();
     }
 
     @Override
@@ -154,6 +159,15 @@ public class MainActivity extends AppCompatActivity {
         meItem.setIcon(R.drawable.profile1); // Default icon for me
         chatItem.setIcon(R.drawable.chat); // Default icon for chat
 
+    }
+    void getFCMToken(){
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if(task.isSuccessful()){
+                String token= task.getResult();
+                Log.i("My token",token);
+
+            }
+        });
     }
 
 }
