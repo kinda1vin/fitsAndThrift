@@ -98,7 +98,10 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
                 super.onItemRangeInserted(positionStart, itemCount);
-                chatRecyclerView.smoothScrollToPosition(0);
+                // Check if the first item was inserted
+                if (positionStart == 0) {
+                    chatRecyclerView.smoothScrollToPosition(0);
+                }
             }
         });
     }

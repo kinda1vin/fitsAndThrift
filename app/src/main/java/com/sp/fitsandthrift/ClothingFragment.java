@@ -2,14 +2,12 @@ package com.sp.fitsandthrift;
 
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,20 +15,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.sp.fitsandthrift.adapter.itemAdapter;
+import com.sp.fitsandthrift.itemAdapter;
+import com.sp.fitsandthrift.model.Usermodel;
 
 
-
-public class ClothingFragment extends Fragment{
+public class ClothingFragment extends Fragment implements selectListener {
     private ImageView backImageView;
     private ImageView cartButton;
     private TextView clothingTitle;
@@ -56,7 +50,7 @@ public class ClothingFragment extends Fragment{
 
         db = FirebaseFirestore.getInstance();
         clothingItemList = new ArrayList<>();
-        itemAdapter = new itemAdapter(getContext(), clothingItemList);
+        itemAdapter = new itemAdapter(getContext(), clothingItemList, this);
         recyclerView.setAdapter(itemAdapter);
 
         if (getArguments() != null) {
@@ -137,4 +131,26 @@ public class ClothingFragment extends Fragment{
         }
     }
 
+    @Override
+    public void onItemClick(int position) {
+        Item item = clothingItemList.get(position);
+        Bundle bundle = new Bundle();
+
+        bundle.putString("itemDescription", item.getItemDescription());
+        bundle.putString("color", item.getColor());
+        bundle.putString("gender", item.getGender());
+        bundle.putString("imageUri", item.getImageUri());
+        bundle.putString("itemCondition", item.getItemCondition());
+        bundle.putString("itemType", item.getItemType());
+        bundle.putString("size", item.getSize());
+
+        ItemDetailsFragment itemDetailsFragment = new ItemDetailsFragment();
+        itemDetailsFragment.setArguments(bundle);
+
+        FragmentManager fragmentManager = getParentFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, itemDetailsFragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+    }
 }

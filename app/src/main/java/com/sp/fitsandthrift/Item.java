@@ -11,7 +11,17 @@ public class Item {
     String size;
     String itemCondition;
 
+    String gender;
+
     String userID;
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
 
     public String getUserID() {
         return userID;
