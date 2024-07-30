@@ -13,4 +13,10 @@
     <string name="login_failed">Incorrect email or password!</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="head_1">Biden aims to expand vaccines for adults and children</string>
+    <string name="head_2">Just got my first shot, helping the world to be a safer place</string>
+    <string name="head_3">Local trains to be suspended in Bengal from tomorrow in view of covid-19</string>
+    <string name="head_4">MHA asks states,UTs to ensure there are no fires in hospitals</string>
+    <string name="head_5">Australian citizen sues PM Morrison over flight ban from india</string>
 </resources>

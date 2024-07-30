@@ -56,16 +56,12 @@
         android:layout_height="1dp"
         android:background="?android:attr/listDivider" />
 
-    <!-- Reviews List -->
-    <LinearLayout
-        android:id="@+id/reviewsList"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/reviewrecyclerview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingTop="16dp">
-
-        <!-- Individual review items will go here -->
-
-    </LinearLayout>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
+    <!-- Reviews List -->
 
 </LinearLayout>

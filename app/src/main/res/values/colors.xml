@@ -11,4 +11,6 @@
 
     <color name="chat_color_sender">#007AFF</color>
     <color name="chat_color_receiver">#A6AE93</color>
+
+    <color name="underline">#D8D6D6</color>
 </resources>

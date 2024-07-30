@@ -22,15 +22,19 @@
         android:id="@+id/nav"
         android:layout_width="match_parent"
         android:layout_height="65dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/navigation"
         android:paddingHorizontal="10dp"
+        android:paddingLeft="5dp"
+        android:paddingTop="5dp"
         app:activeIndicatorLabelPadding="@android:dimen/app_icon_size"
         app:itemIconTint="@color/black"
         app:itemPaddingBottom="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/nav_bar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

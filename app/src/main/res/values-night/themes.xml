@@ -19,4 +19,10 @@
         <item name="boxBackgroundColor">@color/input_field_background</item>
         <item name="android:textColor">@color/black</item> <!-- Change text color if necessary -->
     </style>
+
+    <style name="RoundCorner" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">10dp</item>
+        <item name="color">@color/white</item>
+    </style>
 </resources>
