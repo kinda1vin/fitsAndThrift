@@ -13,7 +13,7 @@ public class Usermodel {
     private String phoneNumber;
     private String profilePicUrl; // Add this field
 
-    private String currentUserId = Util.currentUserId();
+    private String currentUserId;
 
 
     public Usermodel() {

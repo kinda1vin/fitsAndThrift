@@ -31,11 +31,6 @@ public class Util {
         return FirebaseFirestore.getInstance().collection("users");
     }
      public static DocumentReference getChatroomReference(String chatroomId) {
-         if (chatroomId == null) {
-             // The chat room ID is null
-             // Handle this case as appropriate for your applica    tion
-             return null;
-         }
          return FirebaseFirestore.getInstance().collection("chatrooms").document(chatroomId);
      }
 
