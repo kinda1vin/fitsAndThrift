@@ -126,27 +126,21 @@ public class ChatActivity extends AppCompatActivity {
                 });
     }
     void getOrCreateChatroomModel(){
-        DocumentReference chatroomRef = Util.getChatroomReference(chatroomId);
-        if (chatroomRef != null) {
-            chatroomRef.get().addOnCompleteListener(task -> {
-                if(task.isSuccessful()){
-                    chatroomModel = task.getResult().toObject(ChatroomModel.class);
-                    if(chatroomModel==null){
-                        //first time chat
-                        chatroomModel = new ChatroomModel(
-                                chatroomId,
-                                Arrays.asList(Util.currentUserId(),otherUser.getCurrentUserId()),
-                                Timestamp.now(),
-                                ""
-                        );
-                        chatroomRef.set(chatroomModel);
-                    }
+        Util.getChatroomReference(chatroomId).get().addOnCompleteListener(task -> {
+            if(task.isSuccessful()){
+                chatroomModel = task.getResult().toObject(ChatroomModel.class);
+                if(chatroomModel==null){
+                    //first time chat
+                    chatroomModel = new ChatroomModel(
+                            chatroomId,
+                            Arrays.asList(Util.currentUserId(),otherUser.getCurrentUserId()),
+                            Timestamp.now(),
+                            ""
+                    );
+                    Util.getChatroomReference(chatroomId).set(chatroomModel);
                 }
-            });
-        } else {
-            // The chat room reference is null
-            // Handle this case as appropriate for your application
-        }
+            }
+        });
     }
     @Override
     public void onBackPressed() {

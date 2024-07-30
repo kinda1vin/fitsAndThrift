@@ -33,7 +33,7 @@ public class Util {
      public static DocumentReference getChatroomReference(String chatroomId) {
          if (chatroomId == null) {
              // The chat room ID is null
-             // Handle this case as appropriate for your application
+             // Handle this case as appropriate for your applica    tion
              return null;
          }
          return FirebaseFirestore.getInstance().collection("chatrooms").document(chatroomId);
@@ -43,11 +43,6 @@ public class Util {
          return getChatroomReference(chatroomId).collection("chats");
      }
      public static String getChatroomId(String userId1, String userId2) {
-         if (userId1 == null || userId2 == null) {
-             // One or both of the user IDs is null
-             // Handle this case as appropriate for your application
-             return null;
-         }
 
          if (userId1.hashCode() < userId2.hashCode()) {
              return userId1 + "_" + userId2;
