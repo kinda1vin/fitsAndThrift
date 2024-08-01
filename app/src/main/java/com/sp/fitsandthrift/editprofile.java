@@ -1,7 +1,5 @@
 package com.sp.fitsandthrift;
 
-import static java.nio.file.Files.exists;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -10,10 +8,12 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -35,7 +35,8 @@ import com.sp.fitsandthrift.model.Usermodel;
 public class editprofile extends AppCompatActivity {
 
     private static final String TAG = "EditProfile";
-    private EditText editTextName, editTextGender, editTextph;
+    private EditText editTextName, editTextph;
+    private Spinner genderSpinner;
     private Button buttonUpdate;
     private ImageView pic;
     private ProgressBar progressBar;
@@ -63,10 +64,16 @@ public class editprofile extends AppCompatActivity {
     private void initView() {
         pic = findViewById(R.id.pic);
         editTextName = findViewById(R.id.newname);
-        editTextGender = findViewById(R.id.gender);
+        genderSpinner = findViewById(R.id.gender_spinner);
         editTextph = findViewById(R.id.newph);
         buttonUpdate = findViewById(R.id.save_btn);
         progressBar = findViewById(R.id.profile_progress_bar);
+
+        // Set up Spinner with gender options
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.gender_options, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        genderSpinner.setAdapter(adapter);
 
         imagePickLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -102,7 +109,6 @@ public class editprofile extends AppCompatActivity {
 
     private boolean validateInputs() {
         if (TextUtils.isEmpty(editTextName.getText()) ||
-                TextUtils.isEmpty(editTextGender.getText()) ||
                 TextUtils.isEmpty(editTextph.getText())) {
             Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show();
             return false;
@@ -111,12 +117,14 @@ public class editprofile extends AppCompatActivity {
     }
 
     private void updateProfile() {
+        // Extract gender from Spinner
+        String selectedGender = genderSpinner.getSelectedItem().toString();
+        currentusermodel.setGender(selectedGender);
+
         if (selectedImageUri != null) {
             updateProfilePictureAndUserData();
         } else {
-            Toast.makeText(editprofile.this, "Profile updated", Toast.LENGTH_SHORT).show();
-            setResult(Activity.RESULT_OK);
-            finish();
+            updateFirestoreWithNewData(currentusermodel.getProfilePicUrl()); // Use existing profile pic URL
         }
     }
 
@@ -138,7 +146,11 @@ public class editprofile extends AppCompatActivity {
 
     private void updateFirestoreWithNewData(String imageUrl) {
         DocumentReference userRef = db.collection("users").document(mAuth.getCurrentUser().getUid());
-        userRef.update("profilePicUrl", imageUrl)
+
+        userRef.update("profilePicUrl", imageUrl,
+                        "gender", currentusermodel.getGender(),
+                        "username", editTextName.getText().toString(),
+                        "phoneNumber", editTextph.getText().toString())
                 .addOnCompleteListener(task -> {
                     setInProgress(false);
                     if (task.isSuccessful()) {
@@ -167,11 +179,21 @@ public class editprofile extends AppCompatActivity {
                         currentusermodel = document.toObject(Usermodel.class);
                         if (currentusermodel != null) {
                             editTextName.setText(currentusermodel.getUsername());
-                            editTextGender.setText(currentusermodel.getGender());
                             editTextph.setText(currentusermodel.getPhoneNumber());
+
+                            // Set Spinner to current gender
+                            if (!TextUtils.isEmpty(currentusermodel.getGender())) {
+                                int spinnerPosition = ((ArrayAdapter) genderSpinner.getAdapter()).getPosition(currentusermodel.getGender());
+                                genderSpinner.setSelection(spinnerPosition);
+                            }
+
+                            // Load and display the current profile picture
                             if (!TextUtils.isEmpty(currentusermodel.getProfilePicUrl())) {
                                 Uri profilePicUri = Uri.parse(currentusermodel.getProfilePicUrl());
                                 setProfilePic(this, profilePicUri, pic);
+                            } else {
+                                // Set a placeholder if no image URL is available
+                                pic.setImageResource(R.drawable.profile1); // Make sure you have this placeholder image
                             }
                         }
                     } else {
@@ -185,6 +207,11 @@ public class editprofile extends AppCompatActivity {
     }
 
     public static void setProfilePic(Context context, Uri imageUri, ImageView imageView) {
-        Glide.with(context).load(imageUri).apply(RequestOptions.circleCropTransform()).into(imageView);
+        Glide.with(context)
+                .load(imageUri)
+                .apply(RequestOptions.circleCropTransform()
+                        .placeholder(R.drawable.profile1) // Placeholder image
+                        .error(R.drawable.profile)) // Error image if loading fails
+                .into(imageView);
     }
 }

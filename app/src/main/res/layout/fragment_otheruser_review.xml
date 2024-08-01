@@ -1,0 +1,81 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <!-- LinearLayout to center the profile image and rating information -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <!-- User Profile Image -->
+        <!-- Placeholder image -->
+
+        <!-- Average Rating Text -->
+        <TextView
+            android:id="@+id/otheruseravgrating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="4.0"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <!-- Rating Bar -->
+        <RatingBar
+            android:id="@+id/otherratingbar"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:isIndicator="true"
+            android:numStars="5"
+            android:rating="4.0"
+            android:stepSize="0.1" />
+
+        <!-- Number of Reviews Text -->
+        <TextView
+            android:id="@+id/othertotalreview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="(123 reviews)"
+            android:textSize="14sp" />
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:background="?android:attr/listDivider" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/other_reviewrecycle"
+            android:layout_width="match_parent"
+            android:layout_height="504dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <!-- RecyclerView for Reviews -->
+
+    <!-- Floating Action Button for Adding a Review -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_review_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:src="@drawable/baseline_add_24"
+        app:fabSize="normal"
+        app:tint="@android:color/white" />
+
+</RelativeLayout>

@@ -1,5 +1,6 @@
 package com.sp.fitsandthrift;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -7,14 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RatingBar;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -23,10 +22,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.sp.fitsandthrift.adapter.ReviewAdapter;
 import com.sp.fitsandthrift.model.Review;
-
 import java.util.ArrayList;
 
-public class review_fragment extends Fragment {
+public class otheruser_review extends Fragment {
 
     private TextView averageRating;
     private RatingBar ratingBar;
@@ -35,18 +33,27 @@ public class review_fragment extends Fragment {
     private FirebaseFirestore db;
     private RecyclerView ReviewRecyclerView;
     private ReviewAdapter reviewAdapter;
-    private FirebaseAuth auth;
+    private FloatingActionButton addReviewButton; // Use FAB instead of Button
 
     private static final int WRITE_REVIEW_REQUEST_CODE = 1;
+
+    public static otheruser_review newInstance(String otherUserId) {
+        otheruser_review fragment = new otheruser_review();
+        Bundle args = new Bundle();
+        args.putString("otherUserId", otherUserId);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_review_fragment, container, false);
+        View view = inflater.inflate(R.layout.fragment_otheruser_review, container, false);
 
         averageRating = view.findViewById(R.id.otheruseravgrating);
         ratingBar = view.findViewById(R.id.otherratingbar);
         numberOfReviews = view.findViewById(R.id.othertotalreview);
+        addReviewButton = view.findViewById(R.id.add_review_button); // Initialize FAB
 
         setReviewBarData(0.0f, 0);
 
@@ -59,8 +66,13 @@ public class review_fragment extends Fragment {
         ReviewRecyclerView.setAdapter(reviewAdapter);
 
         db = FirebaseFirestore.getInstance();
-        auth = FirebaseAuth.getInstance();
-        loadReviews();
+        loadReviews(getArguments().getString("otherUserId"));
+
+        addReviewButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), WriteReviewActivity.class);
+            intent.putExtra("receiverId", getArguments().getString("otherUserId"));
+            startActivityForResult(intent, WRITE_REVIEW_REQUEST_CODE);
+        });
 
         return view;
     }
@@ -71,11 +83,10 @@ public class review_fragment extends Fragment {
         numberOfReviews.setText("(" + numReviews + " reviews)");
     }
 
-    private void loadReviews() {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        CollectionReference reviewsRef = db.collection("reviews");
+    private void loadReviews(String receiverId) {
+        CollectionReference reviewsRef = db.collection("user_reviews").document(receiverId).collection("reviews");
 
-        reviewsRef.whereEqualTo("receiverId", userId).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        reviewsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 if (e != null) {
@@ -107,5 +118,13 @@ public class review_fragment extends Fragment {
                 reviewAdapter.notifyDataSetChanged();
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == WRITE_REVIEW_REQUEST_CODE && resultCode == getActivity().RESULT_OK) {
+            loadReviews(getArguments().getString("otherUserId"));
+        }
     }
 }

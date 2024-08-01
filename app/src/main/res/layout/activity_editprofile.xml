@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".editprofile">
 
+
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
@@ -39,17 +40,14 @@
             android:inputType="text"
             android:paddingVertical="10dp" />
 
-        <EditText
-            android:id="@+id/gender"
+        <!-- Replace EditText for gender with Spinner -->
+        <Spinner
+            android:id="@+id/gender_spinner"
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
             android:layout_marginVertical="10dp"
-            android:background="@drawable/round_corners_bg"
-            android:drawableEnd="@drawable/baseline_transgender_24"
-            android:ems="10"
-            android:hint="Gender"
-            android:inputType="text" />
+            android:background="@drawable/round_corners_bg" />
 
         <EditText
             android:id="@+id/newph"
@@ -97,6 +95,7 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"

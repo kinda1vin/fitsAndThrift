@@ -189,12 +189,12 @@
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
-                <EditText
+                <Spinner
                     android:id="@+id/itemCondition"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:inputType="text" />
+                    android:layout_height="40sp"
+                    android:ems="10" />
+
             </TableRow>
 
             <TableRow
@@ -209,12 +209,12 @@
                     android:textColor="#000000"
                     android:textStyle="bold" />
 
-                <EditText
+                <Spinner
                     android:id="@+id/itemGender"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:inputType="text" />
+                    android:layout_height="40sp"
+                    android:ems="10" />
+
             </TableRow>
 
             <TableRow
@@ -229,12 +229,12 @@
                     android:textColor="#000000"
                     android:textStyle="bold" />
 
-                <EditText
+                <Spinner
                     android:id="@+id/itemType"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:inputType="text" />
+                    android:layout_height="40sp"
+                    android:ems="10" />
+
             </TableRow>
         </TableLayout>
 
