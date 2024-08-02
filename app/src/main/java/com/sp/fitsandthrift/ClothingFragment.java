@@ -8,21 +8,23 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.sp.fitsandthrift.itemAdapter;
-import com.sp.fitsandthrift.model.Usermodel;
-
+import com.sp.fitsandthrift.adapter.itemAdapter;
+import com.sp.fitsandthrift.Item;
 
 public class ClothingFragment extends Fragment implements selectListener {
     private ImageView backImageView;
@@ -34,7 +36,7 @@ public class ClothingFragment extends Fragment implements selectListener {
     private List<Item> clothingItemList;
     private FirebaseFirestore db;
     private String category;
-
+    private SearchView searchView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,6 +45,7 @@ public class ClothingFragment extends Fragment implements selectListener {
         backImageView = rootView.findViewById(R.id.backIcon);
         cartButton = rootView.findViewById(R.id.cart);
         clothingTitle = rootView.findViewById(R.id.footwearTitle);
+        searchView = rootView.findViewById(R.id.searchView);
 
         recyclerView = rootView.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
@@ -57,6 +60,7 @@ public class ClothingFragment extends Fragment implements selectListener {
             category = getArguments().getString("category", "ALL");
         }
         retrieveClothingItems();
+
 
         // Navigate to Home
         backImageView.setOnClickListener(new View.OnClickListener() {
@@ -88,14 +92,44 @@ public class ClothingFragment extends Fragment implements selectListener {
             }
         });
 
+        //Set up SearchView
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                filterItems(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterItems(newText);
+                return false;
+            }
+        });
+
+
         // Inflate the layout for this fragment
         return rootView;
     }
 
+    private void filterItems(String newText) {
+        List<Item> filteredList = new ArrayList<>();
+        for (Item item : clothingItemList) {
+            if (item.getItemDescription().toLowerCase().contains(newText.toLowerCase())) {
+                filteredList.add(item);
+            }
+        }
+        itemAdapter.updateList(filteredList);
+    }
+
+
     //filter clothing items according to gender
     private void retrieveClothingItems() {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        String currentUserId = mAuth.getCurrentUser().getUid();
         CollectionReference itemsCollection = db.collection("items");
         com.google.firebase.firestore.Query query = itemsCollection.whereEqualTo("itemType", "Clothing");
+
 
         if (!category.equals("All")) {
             query = query.whereEqualTo("gender", category);
@@ -108,10 +142,15 @@ public class ClothingFragment extends Fragment implements selectListener {
 
                         for(QueryDocumentSnapshot document : task.getResult()) {
                             Item item = document.toObject(Item.class);
-                            clothingItemList.add(item);
+                            item.setItemID(document.getId());
+                            if (!item.getUserID().equals(currentUserId)) {
+                                clothingItemList.add(item);
+                            }
                         }
                         itemAdapter.notifyDataSetChanged();
                         updateClothingItems(category);
+                    } else {
+                        Log.d("ClothingFragment", "Error getting documents: ", task.getException());
                     }
                 });
     }
@@ -135,7 +174,7 @@ public class ClothingFragment extends Fragment implements selectListener {
     public void onItemClick(int position) {
         Item item = clothingItemList.get(position);
         Bundle bundle = new Bundle();
-
+        bundle.putString("itemID", item.getItemID());
         bundle.putString("itemDescription", item.getItemDescription());
         bundle.putString("color", item.getColor());
         bundle.putString("gender", item.getGender());

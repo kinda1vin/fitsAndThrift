@@ -30,16 +30,17 @@
                 android:textStyle="bold" />
 
             <SearchView
+                android:id="@+id/searchView"
                 android:layout_width="188dp"
                 android:layout_height="32dp"
                 android:layout_weight="1" />
 
             <ImageView
                 android:id="@+id/cart"
-                android:layout_width="wrap_content"
+                android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/baseline_shopping_cart_24" />
+                app:srcCompat="@drawable/cart_filled" />
         </LinearLayout>
 
         <LinearLayout
@@ -73,7 +74,18 @@
                 android:layout_weight="1"
                 android:text="CART"
                 android:textSize="20sp" />
+
         </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewCart"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_weight="1"
+            android:padding="8dp"
+            android:clipToPadding="false"
+            android:scrollbars="vertical"/>
     </LinearLayout>
 
 </FrameLayout>
