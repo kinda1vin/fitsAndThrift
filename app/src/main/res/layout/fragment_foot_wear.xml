@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FootWearFragment"
-    android:background="#E5E5E5">
+    android:background="#E5E5E5"
+    tools:context=".FootWearFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -31,6 +31,7 @@
                 android:textStyle="bold" />
 
             <SearchView
+                android:id="@+id/searchView"
                 android:layout_width="188dp"
                 android:layout_height="32dp"
                 android:layout_weight="1" />
@@ -44,7 +45,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 

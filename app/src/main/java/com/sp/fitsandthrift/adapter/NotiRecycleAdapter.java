@@ -1,47 +1,55 @@
 package com.sp.fitsandthrift.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.imageview.ShapeableImageView;
-import com.sp.fitsandthrift.model.Notification;
+import com.bumptech.glide.Glide;
 import com.sp.fitsandthrift.R;
+import com.sp.fitsandthrift.model.Notification;
+import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;
 
 public class NotiRecycleAdapter extends RecyclerView.Adapter<NotiRecycleAdapter.MyViewHolder> {
 
-    Context context;
-    ArrayList<Notification> NotiArrayList;
+    private Context context;
+    private ArrayList<Notification> NotiArrayList;
 
     public NotiRecycleAdapter(Context context, ArrayList<Notification> NotiArrayList) {
-        this.context=context;
-        this.NotiArrayList= NotiArrayList;
-
+        this.context = context;
+        this.NotiArrayList = NotiArrayList;
     }
 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v= LayoutInflater.from(context).inflate(R.layout.notii_item,parent,false);
-
+        View v = LayoutInflater.from(context).inflate(R.layout.notii_item, parent, false);
         return new MyViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        Notification noti= NotiArrayList.get(position);
-        holder.tvHeading.setText(noti.getHeading());
-        holder.titleImage.setImageResource(noti.getTitleImage());
+        Notification notification = NotiArrayList.get(position);
+        holder.tvMessage.setText(notification.getMessage());
 
+        // Log data to debug
+        Log.d("NotiRecycleAdapter", "Username: " + notification.getSenderUsername());
+        Log.d("NotiRecycleAdapter", "Profile Pic URL: " + notification.getSenderProfilePicUrl());
 
+        // Load the sender's profile picture using Glide
+        Glide.with(context)
+                .load(notification.getSenderProfilePicUrl())
+                .circleCrop()  // Circular crop the profile picture
+                .placeholder(R.drawable.profile)  // Placeholder image
+                .error(R.drawable.profile)  // Error image
+                .into(holder.profileImage);
     }
 
     @Override
@@ -49,16 +57,15 @@ public class NotiRecycleAdapter extends RecyclerView.Adapter<NotiRecycleAdapter.
         return NotiArrayList.size();
     }
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder{
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvHeading;
-        ShapeableImageView titleImage;
+        TextView tvMessage;
+        ShapeableImageView profileImage;
 
         public MyViewHolder(@NonNull View itemView) {
-
             super(itemView);
-            titleImage= itemView.findViewById(R.id.title_image);
-            tvHeading= itemView.findViewById(R.id.tvHeading);
+            profileImage = itemView.findViewById(R.id.title_image); // Ensure this matches the ImageView ID in XML
+            tvMessage = itemView.findViewById(R.id.tvMessage); // Ensure this matches the TextView ID in XML
         }
     }
 }

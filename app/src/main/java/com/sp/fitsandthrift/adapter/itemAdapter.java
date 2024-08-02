@@ -1,4 +1,4 @@
-package com.sp.fitsandthrift;
+package com.sp.fitsandthrift.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,6 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 import com.bumptech.glide.Glide;
+import com.sp.fitsandthrift.Item;
+import com.sp.fitsandthrift.R;
+import com.sp.fitsandthrift.selectListener;
 
 
 public class itemAdapter extends RecyclerView.Adapter<itemAdapter.MyViewHolder> {
@@ -19,7 +22,6 @@ public class itemAdapter extends RecyclerView.Adapter<itemAdapter.MyViewHolder> 
     private final selectListener listener;
     private Context context;
     private List<Item> itemList;
-
     public itemAdapter(Context context, List<Item> itemList, selectListener listener) {
         this.context = context;
         this.itemList = itemList;
@@ -49,6 +51,11 @@ public class itemAdapter extends RecyclerView.Adapter<itemAdapter.MyViewHolder> 
     public int getItemCount() {
 
         return itemList.size();
+    }
+
+    public void updateList(List<Item> newList) {
+        itemList = newList;
+        notifyDataSetChanged();
     }
 
 

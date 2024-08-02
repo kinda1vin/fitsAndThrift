@@ -8,12 +8,15 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -21,7 +24,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sp.fitsandthrift.itemAdapter;
+import com.sp.fitsandthrift.adapter.itemAdapter;
 import com.sp.fitsandthrift.model.Usermodel;
 
 
@@ -34,6 +37,7 @@ public class FootWearFragment extends Fragment implements selectListener {
     private itemAdapter itemAdapter;
     private List<Item> footwearItemList;
     private FirebaseFirestore db;
+    private SearchView searchView;
 
     private String category;
 
@@ -45,6 +49,7 @@ public class FootWearFragment extends Fragment implements selectListener {
         backImageView = rootView.findViewById(R.id.backIcon);
         cartButton = rootView.findViewById(R.id.cart);
         footwearTitle = rootView.findViewById(R.id.footwearTitle);
+        searchView = rootView.findViewById(R.id.searchView);
 
         recyclerView = rootView.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
@@ -91,14 +96,43 @@ public class FootWearFragment extends Fragment implements selectListener {
             }
         });
 
+        //Set up SearchView
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                filterItems(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterItems(newText);
+                return false;
+            }
+        });
+
         // Inflate the layout for this fragment
         return rootView;
     }
 
+    private void filterItems(String newText) {
+        List<Item> filteredList = new ArrayList<>();
+        for(Item item : footwearItemList) {
+            if(item.getItemDescription().toLowerCase().contains(newText.toLowerCase())) {
+                filteredList.add(item);
+            }
+        }
+        itemAdapter.updateList(filteredList);
+    }
+
     //filter footwear items according to gender
     private void retrieveFootwearItems() {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        String currentUserId = mAuth.getCurrentUser().getUid();
         CollectionReference itemsCollection = db.collection("items");
         com.google.firebase.firestore.Query query = itemsCollection.whereEqualTo("itemType", "Footwear");
+
+
 
         if(!category.equals("All")) {
             query = query.whereEqualTo("gender", category);
@@ -110,10 +144,15 @@ public class FootWearFragment extends Fragment implements selectListener {
                         footwearItemList.clear();
                         for(QueryDocumentSnapshot doc : task.getResult()) {
                             Item item = doc.toObject(Item.class);
-                            footwearItemList.add(item);
+                            item.setItemID(doc.getId());
+                            if(!item.getUserID().equals(currentUserId)) {
+                                footwearItemList.add(item);
+                            }
                         }
                         itemAdapter.notifyDataSetChanged();
                         updateFootwearItems(category);
+                    } else {
+                        Log.d("FootwearFragment", "Error getting documents: ", task.getException());
                     }
                 });
     }
@@ -137,7 +176,7 @@ public class FootWearFragment extends Fragment implements selectListener {
     public void onItemClick(int position) {
         Item item = footwearItemList.get(position);
         Bundle bundle = new Bundle();
-
+        bundle.putString("itemID", item.getItemID());
         bundle.putString("itemDescription", item.getItemDescription());
         bundle.putString("color", item.getColor());
         bundle.putString("gender", item.getGender());

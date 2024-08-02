@@ -38,7 +38,6 @@ public class me_fragment extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
-    // Updated newInstance method to handle email parameter correctly
     public static me_fragment newInstance(String email) {
         me_fragment fragment = new me_fragment();
         Bundle args = new Bundle();
@@ -61,10 +60,15 @@ public class me_fragment extends Fragment {
         setupTabHost(view);
         if (getArguments() != null) {
             String email = getArguments().getString(ARG_EMAIL);
-            emailTextView.setText(email); // Set the email directly if it's passed via newInstance
+            emailTextView.setText(email);
         }
-        loadUserData();
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        loadUserData();
     }
 
     private void initializeViews(View view) {
@@ -119,12 +123,14 @@ public class me_fragment extends Fragment {
     }
 
     private void updateUI(Usermodel usermodel) {
-        usernameTextView.setText(usermodel.getUsername());
-        if (!TextUtils.isEmpty(usermodel.getProfilePicUrl())) {
-            Uri profilePicUri = Uri.parse(usermodel.getProfilePicUrl());
-            setProfilePic(getActivity(), profilePicUri, profilePic);
+        if (usermodel != null) {
+            usernameTextView.setText(usermodel.getUsername());
+            if (!TextUtils.isEmpty(usermodel.getProfilePicUrl())) {
+                Uri profilePicUri = Uri.parse(usermodel.getProfilePicUrl());
+                setProfilePic(profilePicUri, profilePic);
+            }
+            updateAboutFragment(usermodel.getEmail(), usermodel.getPhoneNumber());
         }
-        updateAboutFragment(usermodel.getEmail(), usermodel.getPhoneNumber());
     }
 
     private void updateAboutFragment(String email, String phone) {
@@ -162,7 +168,14 @@ public class me_fragment extends Fragment {
         loadUserData(); // Ensure updated data is shown upon returning
     }
 
-    public static void setProfilePic(Context context, Uri imageUri, ImageView imageView) {
-        Glide.with(context).load(imageUri).apply(RequestOptions.circleCropTransform()).into(imageView);
+    private void setProfilePic(Uri imageUri, ImageView imageView) {
+        if (isAdded() && getActivity() != null) {
+            Glide.with(this)
+                    .load(imageUri)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(imageView);
+        } else {
+            Log.e("me_fragment", "Fragment not attached or context is null");
+        }
     }
 }

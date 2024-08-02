@@ -1,16 +1,10 @@
 package com.sp.fitsandthrift;
 
-import static com.bumptech.glide.load.resource.bitmap.TransformationUtils.circleCrop;
-
-import android.content.Context;
-import android.media.audiofx.AudioEffect;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
-import android.util.EventLogTags;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,14 +13,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.sp.fitsandthrift.model.CartItem;
 import com.sp.fitsandthrift.model.Usermodel;
 
 public class ItemDetailsFragment extends Fragment {
-    private ImageView cartButton;
+    private ImageView cartIcon;
     private ImageView backButton;
     private ImageView itemImage;
     private TextView itemDescription;
@@ -37,8 +34,12 @@ public class ItemDetailsFragment extends Fragment {
     private TextView size;
     private TextView userName;
     private ImageView profilePic;
-    private FirebaseFirestore db;
+    private String imageUri;
 
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
+    private String userID;
+    private boolean isCartDisplayed = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -46,7 +47,7 @@ public class ItemDetailsFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_item_details, container, false);
 
-        cartButton = rootView.findViewById(R.id.cartButton);
+        cartIcon = rootView.findViewById(R.id.cartButton);
         itemImage = rootView.findViewById(R.id.itemImageView);
         itemDescription = rootView.findViewById(R.id.DescriptionTextView);
         color = rootView.findViewById(R.id.colorTextView);
@@ -59,27 +60,79 @@ public class ItemDetailsFragment extends Fragment {
         backButton = rootView.findViewById(R.id.backButton);
         db = FirebaseFirestore.getInstance();
 
-        String Description = getArguments().getString("itemDescription");
-        if (Description == null) {
+        userID = auth.getCurrentUser().getUid();
+
+        String itemID = getArguments().getString("itemID");
+
+        if (itemID == null) {
             Toast.makeText(getContext(), "Item not found", Toast.LENGTH_SHORT).show();
             return rootView;
         } else {
-            fetchItemDetails(Description);
+            fetchItemDetails(itemID);
         }
 
         // Navigate to Back
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFragmentManager().popBackStack();
+                getParentFragmentManager().popBackStack();
+            }
+        });
+
+        cartIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                {
+                    addToCart();
+
+                    if (isCartDisplayed) {
+                        // change icon
+                        cartIcon.setImageResource(R.drawable.cart_filled);
+                    } else {
+                        cartIcon.setImageResource(R.drawable.cart_notfilled);
+                    }
+                }
             }
         });
 
         return rootView;
     }
 
-    private void fetchItemDetails(String Description) {
-        db.collection("items").whereEqualTo("itemDescription", Description).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+    private void addToCart() {
+        String itemID = getArguments().getString("itemID");
+        if (itemID == null) {
+            Toast.makeText(getContext(), "Item not found", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        CartItem cartItem = new CartItem(
+                imageUri,
+                itemDescription.getText().toString(),
+                itemID,
+                userID
+        );
+
+        db.collection("carts")
+                .document(userID)
+                .collection("Items")
+                .document(itemID)
+                .set(cartItem)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(getContext(), "Item added to cart", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getContext(), "Failed to add item to cart", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void fetchItemDetails(String itemID) {
+        db.collection("items").whereEqualTo("itemID", itemID).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 if (!queryDocumentSnapshots.isEmpty()) {
@@ -90,8 +143,9 @@ public class ItemDetailsFragment extends Fragment {
                         color.setText("Color" + ": " + item.getColor());
                         gender.setText("Gender" + ": " + item.getItemGender());
                         itemCondition.setText("Item Condition" + ": " + item.getItemCondition());
-                        itemType.setText("Type" + ": " +  item.getItemType());
+                        itemType.setText("Type" + ": " + item.getItemType());
                         size.setText("Size" + ": " + item.getSize());
+                        imageUri = item.getImageUri();
                         Glide.with(getContext()).load(item.getImageUri()).into(itemImage);
                         fetchUserDetails(item.getUserID());
                     }

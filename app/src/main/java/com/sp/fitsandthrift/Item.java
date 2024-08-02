@@ -10,10 +10,17 @@ public class Item {
     String color;
     String size;
     String itemCondition;
-
     String gender;
-
     String userID;
+    String itemID;
+
+    public String getItemID() {
+        return itemID;
+    }
+
+    public void setItemID(String itemID) {
+        this.itemID = itemID;
+    }
 
     public String getGender() {
         return gender;
@@ -31,8 +38,12 @@ public class Item {
         this.userID = userID;
     }
 
+    // Assuming userID is the owner ID
+    public String getOwnerId() {
+        return userID;
+    }
 
-    public Item(){}
+    public Item() {}
 
     public Item(String itemDescription, String imageUri) {
         this.itemDescription = itemDescription;
@@ -95,7 +106,7 @@ public class Item {
         this.itemCondition = itemCondition;
     }
 
-    public Uri getImageUriAsUri(){
+    public Uri getImageUriAsUri() {
         if (imageUri != null) {
             return Uri.parse(imageUri);
         } else {
@@ -103,5 +114,4 @@ public class Item {
             return null;
         }
     }
-
 }

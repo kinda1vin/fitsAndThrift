@@ -16,10 +16,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,9 +62,9 @@ public class uploadItem extends AppCompatActivity {
     private EditText itemDescription;
     private EditText color;
     private EditText size;
-    private EditText itemCondition;
-    private EditText itemGender;
-    private EditText itemType;
+    private Spinner itemCondition;
+    private Spinner itemGender;
+    private Spinner itemType;
     private Button btnupload;
     private ImageButton imgbutton;
     private static final int PICK_IMAGE = 100;
@@ -99,6 +102,62 @@ public class uploadItem extends AppCompatActivity {
                 finish();
             }
         });
+
+        itemCondition.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                itemCondition.setSelection(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        ArrayList<String> itemConditionList = new ArrayList<>();
+        itemConditionList.add("New");
+        itemConditionList.add("Once wear");
+        itemConditionList.add("Twice wear");
+        ArrayAdapter<String> itemConditionAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, itemConditionList);
+        itemConditionAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
+        itemCondition.setAdapter(itemConditionAdapter);
+
+        itemGender.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                itemGender.setSelection(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        ArrayList<String> itemGenderList = new ArrayList<>();
+        itemGenderList.add("Male");
+        itemGenderList.add("Female");
+        ArrayAdapter<String> itemGenderAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, itemGenderList);
+        itemGenderAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
+        itemGender.setAdapter(itemGenderAdapter);
+
+        itemType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                itemType.setSelection(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        ArrayList<String> itemTypeList = new ArrayList<>();
+        itemTypeList.add("Clothing");
+        itemTypeList.add("Footwear");
+        ArrayAdapter<String> itemTypeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, itemTypeList);
+        itemTypeAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
+        itemType.setAdapter(itemTypeAdapter);
     }
 
     private View.OnClickListener onSave = new View.OnClickListener() {
@@ -107,9 +166,9 @@ public class uploadItem extends AppCompatActivity {
             String brandnamestr = itemDescription.getText().toString();
             String sizestr = size.getText().toString();
             String colorstr = color.getText().toString();
-            String conditionstr = itemCondition.getText().toString();
-            String genderstr = itemGender.getText().toString();
-            String itemtypestr = itemType.getText().toString();
+            String conditionstr = itemCondition.toString();
+            String genderstr = itemGender.toString();
+            String itemtypestr = itemType.toString();
 
             if (TextUtils.isEmpty(brandnamestr) || TextUtils.isEmpty(sizestr) || TextUtils.isEmpty(colorstr) || TextUtils.isEmpty(conditionstr) || TextUtils.isEmpty(genderstr) || TextUtils.isEmpty(itemtypestr)) {
                 Toast.makeText(getApplicationContext(), "Please fill up the details", Toast.LENGTH_LONG).show();
@@ -275,27 +334,32 @@ public class uploadItem extends AppCompatActivity {
                     //Get the current user's ID
                     String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+                    // Create a new document and get its ID
+                    DocumentReference newItemRef = dbroot.collection("items").document();
+                    String itemID = newItemRef.getId();
+
                     // Store the download URL in Firestore
                     Map<String,Object> items = new HashMap<>();
                     items.put("itemDescription", itemDescription.getText().toString().trim());
                     items.put("color", color.getText().toString().trim());
                     items.put("size", size.getText().toString().trim());
-                    items.put("gender", itemGender.getText().toString().trim());
-                    items.put("itemCondition", itemCondition.getText().toString().trim());
-                    items.put("itemType", itemType.getText().toString().trim());
+                    items.put("gender", itemGender.getSelectedItem().toString());
+                    items.put("itemCondition", itemCondition.getSelectedItem().toString());
+                    items.put("itemType", itemType.getSelectedItem().toString());
                     items.put("imageUri", downloadUri.toString());
                     items.put("userID", userID);// Add the userID to the item
+                    items.put("itemID", itemID);
 
-                    dbroot.collection("items").add(items)
-                            .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                    newItemRef.set(items)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
-                                public void onComplete(@NonNull Task<DocumentReference> task) {
+                                public void onComplete(@NonNull Task<Void> task) {
                                     itemDescription.setText("");
                                     color.setText("");
                                     size.setText("");
-                                    itemGender.setText("");
-                                    itemCondition.setText("");
-                                    itemType.setText("");
+                                    itemGender.setSelection(0);
+                                    itemCondition.setSelection(0);
+                                    itemType.setSelection(0);
 
                                     SharedPreferences sharedPreferences = getSharedPreferences("imageUridatashare", MODE_PRIVATE);
                                     SharedPreferences.Editor editor = sharedPreferences.edit();

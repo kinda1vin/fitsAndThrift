@@ -19,6 +19,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         chatFragment = new ChatFragment();
 
         bottomNavigationView = findViewById(R.id.nav);
+
         frame = findViewById(R.id.frame);
 
         // Set default selected item

@@ -1,37 +1,51 @@
 package com.sp.fitsandthrift.model;
 
 public class Review {
-    String user;
-    String reviewuserpic;
-    String reviewtext;
+    private String senderId;
+    private String receiverId;
+    private String reviewText;
+    private int rating;
 
-    public Review(String user, String reviewuserpic, String reviewtext) {
-        this.user = user;
-        this.reviewuserpic = reviewuserpic;
-        this.reviewtext = reviewtext;
+    public Review() {
+        // Default constructor required for calls to DataSnapshot.getValue(Review.class)
     }
 
-    public String getUser() {
-        return user;
+    public Review(String senderId, String receiverId, String reviewText, int rating) {
+        this.senderId = senderId;
+        this.receiverId = receiverId;
+        this.reviewText = reviewText;
+        this.rating = rating;
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    public String getSenderId() {
+        return senderId;
     }
 
-    public String getReviewuserpic() {
-        return reviewuserpic;
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
     }
 
-    public void setReviewuserpic(String reviewuserpic) {
-        this.reviewuserpic = reviewuserpic;
+    public String getReceiverId() {
+        return receiverId;
     }
 
-    public String getReviewtext() {
-        return reviewtext;
+    public void setReceiverId(String receiverId) {
+        this.receiverId = receiverId;
     }
 
-    public void setReviewtext(String reviewtext) {
-        this.reviewtext = reviewtext;
+    public String getReviewText() {
+        return reviewText;
+    }
+
+    public void setReviewText(String reviewText) {
+        this.reviewText = reviewText;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 }
