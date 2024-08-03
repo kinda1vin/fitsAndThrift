@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FBF5F5"
+    android:backgroundTint="#FBF5F5"
     tools:context=".ChatFragment">
 
     <RelativeLayout
@@ -20,12 +22,12 @@
             android:textStyle="bold" />
 
         <ImageView
+            android:id="@+id/searchChat"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_alignParentEnd="true"
-            android:backgroundTint="@color/fits_n_thrift"
             android:background="@drawable/baseline_search_24"
-            android:id="@+id/searchChat"/>
+            android:backgroundTint="@color/fits_n_thrift" />
 
     </RelativeLayout>
 
@@ -36,8 +38,6 @@
         android:layout_marginTop="60dp"
         android:padding="10dp"
         android:scrollbars="vertical" />
-
-
 
 
 </RelativeLayout>

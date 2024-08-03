@@ -3,14 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FBF5F5"
+    android:backgroundTint="#FBF5F5"
     android:orientation="vertical"
     tools:context=".ChatActivity">
 
     <RelativeLayout
+        android:id="@+id/topBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:id="@+id/topBar"
         android:padding="15dp">
 
         <ImageView
@@ -24,8 +26,8 @@
         <!-- Profile picture view -->
         <ImageView
             android:id="@+id/profilePic"
-            android:layout_height="48dp"
             android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_marginStart="10dp"
             android:layout_toRightOf="@+id/backBtn"
             android:src="@drawable/profile1" />
@@ -34,13 +36,13 @@
             android:id="@+id/other_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="7dp"
             android:layout_marginLeft="10dp"
+            android:layout_marginTop="7dp"
             android:layout_toRightOf="@+id/profilePic"
             android:text="Username"
             android:textColor="#000000"
             android:textSize="24dp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -48,14 +50,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/bottom_layout"
-        android:layout_below="@+id/topBar"/>
+        android:layout_below="@+id/topBar" />
 
     <RelativeLayout
+        android:id="@+id/bottom_layout"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:padding="8dp"
         android:layout_alignParentBottom="true"
-        android:id="@+id/bottom_layout">
+        android:padding="8dp">
 
         <EditText
             android:id="@+id/chatBox"
@@ -73,12 +75,12 @@
             android:textColorHint="#CCCCCC" />
 
         <ImageButton
+            android:id="@+id/msg_send_btn"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/baseline_send_24"
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
             android:background="@color/offwhite"
-            android:id="@+id/msg_send_btn"/>
+            android:src="@drawable/baseline_send_24" />
     </RelativeLayout>
 </RelativeLayout>

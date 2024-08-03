@@ -78,7 +78,10 @@ public class otheruser_review extends Fragment {
     }
 
     private void setReviewBarData(float avgRating, int numReviews) {
-        averageRating.setText(String.valueOf(avgRating));
+        // Use String.format to format the average rating
+        String formattedRating = String.format("%.2f", avgRating);
+
+        averageRating.setText(formattedRating);  // Set formatted average rating
         ratingBar.setRating(avgRating);
         numberOfReviews.setText("(" + numReviews + " reviews)");
     }

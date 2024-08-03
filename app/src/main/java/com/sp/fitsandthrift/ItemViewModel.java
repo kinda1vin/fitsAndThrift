@@ -21,7 +21,8 @@ public class ItemViewModel extends ViewModel {
 
     public void retrieveItems(String itemType, String category, String currentUserId) {
         CollectionReference itemsCollection = db.collection("items");
-        com.google.firebase.firestore.Query query = itemsCollection.whereEqualTo("itemType", itemType);
+        com.google.firebase.firestore.Query query = itemsCollection.whereEqualTo("itemType", itemType)
+                .whereEqualTo("trade_status", false);
 
         if (!category.equals("All")) {
             query = query.whereEqualTo("gender", category);

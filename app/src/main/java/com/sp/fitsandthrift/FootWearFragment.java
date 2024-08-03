@@ -73,7 +73,11 @@ public class FootWearFragment extends Fragment implements selectListener {
         itemViewModel.getItems().observe(getViewLifecycleOwner(), items -> {
             footwearItemList.clear();
             if (items != null) {
-                footwearItemList.addAll(items);
+                for(Item item : items) {
+                    if (!item.isTrade_status() && !item.getUserID().equals(currentUserId)) {
+                        footwearItemList.add(item);
+                    }
+                }
             }
             itemAdapter.updateList(footwearItemList);
         });
@@ -131,8 +135,11 @@ public class FootWearFragment extends Fragment implements selectListener {
 
     private void filterItems(String newText) {
         List<Item> filteredList = new ArrayList<>();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        String currentUserId = mAuth.getCurrentUser().getUid();
+
         for(Item item : footwearItemList) {
-            if(item.getItemDescription().toLowerCase().contains(newText.toLowerCase())) {
+            if(item.getItemDescription().toLowerCase().contains(newText.toLowerCase()) && !item.getUserID().equals(currentUserId) && !item.isTrade_status()) {
                 filteredList.add(item);
             }
         }
@@ -197,6 +204,7 @@ public class FootWearFragment extends Fragment implements selectListener {
         bundle.putString("itemCondition", item.getItemCondition());
         bundle.putString("itemType", item.getItemType());
         bundle.putString("size", item.getSize());
+
 
         ItemDetailsFragment itemDetailsFragment = new ItemDetailsFragment();
         itemDetailsFragment.setArguments(bundle);

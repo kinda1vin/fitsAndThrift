@@ -5,7 +5,7 @@
     android:id="@+id/fragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E5E5E5"
+    android:background="#FBF5F5"
     tools:context=".Home_Fragment">
 
     <LinearLayout
@@ -26,10 +26,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:paddingHorizontal="10sp"
                 android:text="Fits&amp;Thrift"
                 android:textColor="#000000"
                 android:textSize="20sp"
-                android:paddingHorizontal="10sp"
                 android:textStyle="bold" />
 
             <SearchView
@@ -129,7 +129,6 @@
 
 
     </LinearLayout>
-
 
 
 </FrameLayout>

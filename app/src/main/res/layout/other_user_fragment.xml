@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FBF5F5"
     tools:context=".otheruser_fragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -109,6 +110,7 @@
                             android:orientation="vertical">
 
                         </LinearLayout>
+
                         <LinearLayout
                             android:id="@+id/listing_tab"
                             android:layout_width="match_parent"

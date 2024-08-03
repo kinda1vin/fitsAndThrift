@@ -5,27 +5,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessaging;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -64,28 +54,22 @@ public class MainActivity extends AppCompatActivity {
         reviewFragment = new review_fragment();
         tradeFragment = new Trade_fragment();
         chatFragment = new ChatFragment();
-        meFragment= new me_fragment();
 
         bottomNavigationView = findViewById(R.id.nav);
-
         frame = findViewById(R.id.frame);
 
         // Set default selected item
         bottomNavigationView.setSelectedItemId(R.id.home);
 
-        // Handle Intent extras to load specific fragments
-        boolean loadMeFragment = getIntent().getBooleanExtra("loadMeFragment", false);
-        boolean loadChatFragment = getIntent().getBooleanExtra("loadChatFragment", false);
+        // Set default fragment
 
-        if (loadMeFragment) {
-            bottomNavigationView.setSelectedItemId(R.id.me);
-            loadFragment(meFragment, true);
-        } else if (loadChatFragment) {
+        boolean loadChatFragment = getIntent().getBooleanExtra("loadChatFragment", false);
+        if (loadChatFragment) {
             bottomNavigationView.setSelectedItemId(R.id.chat);
-            loadFragment(chatFragment, true);
+            loadFragment(new ChatFragment(), true);
         } else {
             bottomNavigationView.setSelectedItemId(R.id.home);
-            loadFragment(homeFragment, true);
+            loadFragment(new Home_Fragment(), true);
         }
 
         bottomNavigationView.getMenu().findItem(R.id.home).setIcon(R.drawable.home1);
@@ -98,16 +82,16 @@ public class MainActivity extends AppCompatActivity {
                 resetIcons();
 
                 if (itemId == R.id.home) {
-                    loadFragment(homeFragment, false);
+                    loadFragment(new Home_Fragment(), false);
                     item.setIcon(R.drawable.home1); // Change to selected icon
                 } else if (itemId == R.id.trade) {
-                    loadFragment(tradeFragment, false);
+                    loadFragment(new Trade_fragment(), false);
                     item.setIcon(R.drawable.activetrade); // Change to selected icon
                 } else if (itemId == R.id.noti) {
-                    loadFragment(notificationFragment, false);
+                    loadFragment(new notification_fragment(), false);
                     item.setIcon(R.drawable.bell); // Change to selected icon
                 } else if (itemId == R.id.chat) {
-                    loadFragment(chatFragment, false);
+                    loadFragment(new ChatFragment(), false);
                     item.setIcon(R.drawable.cmt); // Change to selected icon
                 } else if (itemId == R.id.me) {
                     if (user != null) {
@@ -121,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-
         getFCMToken();
     }
 
@@ -165,7 +148,6 @@ public class MainActivity extends AppCompatActivity {
         notiItem.setIcon(R.drawable.noti); // Default icon for notification
         meItem.setIcon(R.drawable.profile1); // Default icon for me
         chatItem.setIcon(R.drawable.chat); // Default icon for chat
-
     }
 
     void getFCMToken() {
@@ -176,5 +158,4 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 }

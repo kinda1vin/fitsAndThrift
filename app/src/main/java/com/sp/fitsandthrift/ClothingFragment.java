@@ -69,7 +69,11 @@ public class ClothingFragment extends Fragment implements selectListener {
         itemViewModel.getItems().observe(getViewLifecycleOwner(), items -> {
             clothingItemList.clear();
             if (items != null) {
-                clothingItemList.addAll(items);
+                for (Item item : items) {
+                    if (!item.isTrade_status() && !item.getUserID().equals(currentUserId)) {
+                        clothingItemList.add(item);
+                    }
+                }
             }
             itemAdapter.updateList(clothingItemList);
         });
@@ -133,7 +137,8 @@ public class ClothingFragment extends Fragment implements selectListener {
         String currentUserId = mAuth.getCurrentUser().getUid();
 
         for (Item item : clothingItemList) { // Use appropriate list for each fragment
-            if (item.getItemDescription().toLowerCase().contains(newText.toLowerCase()) && !item.getUserID().equals(currentUserId)) {
+            if (item.getItemDescription().toLowerCase().contains(newText.toLowerCase()) && !item.getUserID().equals(currentUserId)
+                    && !item.isTrade_status()) {
                 filteredList.add(item);
             }
         }

@@ -1,27 +1,25 @@
 package com.sp.fitsandthrift;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import org.json.JSONObject;
 
@@ -80,6 +78,7 @@ public class TradeOfferMatch extends AppCompatActivity {
             if (!desiredItems.isEmpty()) {
                 Item desiredItem = desiredItems.get(0);  // Assuming there's only one desired item
                 sendNotificationToOwner(desiredItem.getUserID(), selectedItemIds, desiredItem.getItemID());
+                navigateToItemDetailsFragment(desiredItem);
                 Toast.makeText(TradeOfferMatch.this, "Notification sent to owner", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(TradeOfferMatch.this, "No desired item selected", Toast.LENGTH_SHORT).show();
@@ -226,5 +225,38 @@ public class TradeOfferMatch extends AppCompatActivity {
             }
         }
     }
+    private void navigateToItemDetailsFragment(Item desiredItem) {
+        // Create an instance of ItemDetailsFragment
+        ItemDetailsFragment itemDetailsFragment = new ItemDetailsFragment();
+
+        // Prepare arguments to pass data to the fragment
+        Bundle args = new Bundle();
+        args.putString("userID", desiredItem.getUserID());
+        args.putString("itemID", desiredItem.getItemID());
+        itemDetailsFragment.setArguments(args);
+
+        View containerView = findViewById(R.id.frame);
+        if (containerView == null) {
+            Log.e("TradeOfferMatch", "Container view with id 'frame' not found!");
+            return; // Early exit if the container is not found
+        }
+
+        // Perform the fragment transaction
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        // Optionally, set custom animations for the transition
+        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+
+        // Replace the existing fragment with ItemDetailsFragment
+        fragmentTransaction.replace(R.id.frame, itemDetailsFragment);
+
+        // Add to back stack to allow "back" navigation
+        fragmentTransaction.addToBackStack(null);
+
+        // Commit the transaction
+        fragmentTransaction.commit();
+    }
+
 
 }
