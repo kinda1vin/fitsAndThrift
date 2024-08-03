@@ -24,6 +24,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.sp.fitsandthrift.Firebase.Util;
 
 import java.util.List;
 
@@ -173,6 +174,11 @@ public class MainActivity extends AppCompatActivity {
             if (task.isSuccessful()) {
                 String token = task.getResult();
                 Log.i("My token", token);
+                if (user != null) {
+                    Util.currentUserDetails().update("fcmToken", token);
+                } else {
+                    Log.w("MainActivity", "User is null, cannot update FCM token");
+                }
             }
         });
     }

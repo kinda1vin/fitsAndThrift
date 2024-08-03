@@ -16,6 +16,13 @@ import java.util.List;
 
 public class Util {
 
+    public static boolean isLoggedIn(){
+        if(currentUserId()!=null){
+            return true;
+        }
+        return false;
+    }
+
     // Retrieve current user's ID
     public static String currentUserId() {
         return FirebaseAuth.getInstance().getUid();

@@ -15,6 +15,15 @@ public class Usermodel {
 
     private String currentUserId;
 
+    private String fcmToken;
+
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
 
     public Usermodel() {
 

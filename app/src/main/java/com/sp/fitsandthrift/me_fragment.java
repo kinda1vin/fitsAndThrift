@@ -22,10 +22,14 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.sp.fitsandthrift.model.Usermodel;
 
 public class me_fragment extends Fragment {
@@ -79,9 +83,15 @@ public class me_fragment extends Fragment {
         logoutButton = view.findViewById(R.id.btnLogout);
 
         logoutButton.setOnClickListener(v -> {
-            FirebaseAuth.getInstance().signOut();
-            startActivity(new Intent(getActivity(), Login.class));
-            getActivity().finish();
+            FirebaseMessaging.getInstance().deleteToken().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    FirebaseAuth.getInstance().signOut();
+                    startActivity(new Intent(getActivity(), Login.class));
+                    getActivity().finish();
+                }
+            });
+
         });
 
         editProfileButton.setOnClickListener(v -> startActivityForResult(new Intent(getActivity(), editprofile.class), 1));
