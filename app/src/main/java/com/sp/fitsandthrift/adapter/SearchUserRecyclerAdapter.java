@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.sp.fitsandthrift.ChatActivity;
@@ -19,9 +20,10 @@ import com.sp.fitsandthrift.Firebase.Util;
 import com.sp.fitsandthrift.R;
 import com.sp.fitsandthrift.model.Usermodel;
 
-public class SearchUserRecyclerAdapter extends FirestoreRecyclerAdapter <Usermodel, SearchUserRecyclerAdapter.UserModelViewHolder>{
+public class SearchUserRecyclerAdapter extends FirestoreRecyclerAdapter<Usermodel, SearchUserRecyclerAdapter.UserModelViewHolder> {
 
     Context context;
+
     public SearchUserRecyclerAdapter(@NonNull FirestoreRecyclerOptions<Usermodel> options, Context context) {
         super(options);
         this.context = context;
@@ -31,18 +33,30 @@ public class SearchUserRecyclerAdapter extends FirestoreRecyclerAdapter <Usermod
     protected void onBindViewHolder(@NonNull UserModelViewHolder holder, int position, @NonNull Usermodel model) {
         holder.username.setText(model.getUsername());
         holder.phoneNumber.setText(model.getPhoneNumber());
-        if(model.getCurrentUserId().equals(Util.currentUserId())){
+
+        // Display "(You)" if the current user is the one being displayed
+        if (model.getCurrentUserId().equals(Util.currentUserId())) {
             holder.username.setText(model.getUsername() + " (You)");
         }
 
-        holder.itemView.setOnClickListener(v->{
+        // Load profile picture using Glide
+        if (model.getProfilePicUrl() != null && !model.getProfilePicUrl().isEmpty()) {
+            Glide.with(context)
+                    .load(model.getProfilePicUrl())
+                    .circleCrop()
+                    .placeholder(R.drawable.profile1) // Placeholder image
+                    .error(R.drawable.profile1) // Error image
+                    .into(holder.profilePic);
+        } else {
+            holder.profilePic.setImageResource(R.drawable.profile1); // Default image
+        }
+
+        holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, ChatActivity.class);
             AndroidUtil.passUserModelAsIntent(intent, model);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
-
         });
-
     }
 
     @NonNull
@@ -56,16 +70,13 @@ public class SearchUserRecyclerAdapter extends FirestoreRecyclerAdapter <Usermod
 
         TextView username;
         TextView phoneNumber;
-
         ImageView profilePic;
-
 
         public UserModelViewHolder(@NonNull View itemView) {
             super(itemView);
             username = itemView.findViewById(R.id.user_name);
             phoneNumber = itemView.findViewById(R.id.user_phone);
-            profilePic = itemView.findViewById(R.id.profile_pic_view) ;
-
+            profilePic = itemView.findViewById(R.id.profile_pic_view); // Ensure this is the correct ID
         }
     }
 }
