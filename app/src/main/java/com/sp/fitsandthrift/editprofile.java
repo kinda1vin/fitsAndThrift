@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -19,6 +20,9 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -68,6 +72,12 @@ public class editprofile extends AppCompatActivity {
         editTextph = findViewById(R.id.newph);
         buttonUpdate = findViewById(R.id.save_btn);
         progressBar = findViewById(R.id.profile_progress_bar);
+
+        // Initialize the back button
+        ImageButton backButton = findViewById(R.id.back_button);
+        backButton.setOnClickListener(v -> onBackPressed());
+
+
 
         // Set up Spinner with gender options
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -214,4 +224,15 @@ public class editprofile extends AppCompatActivity {
                         .error(R.drawable.profile)) // Error image if loading fails
                 .into(imageView);
     }
+
+    @Override
+
+    public void onBackPressed() {
+        Intent intent = new Intent(editprofile.this, MainActivity.class);
+        intent.putExtra("loadMeFragment", true);
+        startActivity(intent);
+        finish();
+        super.onBackPressed();
+    }
+
 }

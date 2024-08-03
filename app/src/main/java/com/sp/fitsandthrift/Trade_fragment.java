@@ -3,9 +3,7 @@ package com.sp.fitsandthrift;
 import static android.content.ContentValues.TAG;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -21,31 +19,31 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TabHost;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.sp.fitsandthrift.adapter.itemAdapter;
+import com.sp.fitsandthrift.selectListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class Trade_fragment extends Fragment {
 
     private TabHost tabs;
     private ImageView upload;
-    private RecyclerView recyclerView;
-    private uploadItem.ItemAdapter ItemAdapter;
-    public static ArrayList<Item> items;
-    FirebaseFirestore db;
-    ProgressDialog progressDialog;
+    private RecyclerView myItemRecyclerView;
+    private RecyclerView tradedItemsRecyclerView;
+    private itemAdapter myItemAdapter;
+    private itemAdapter tradedItemAdapter;
+    private List<Item> myItems;
+    private List<Item> tradedItems;
+    private FirebaseFirestore db;
+    private ProgressDialog progressDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -66,54 +64,64 @@ public class Trade_fragment extends Fragment {
         spec.setIndicator("My Item");
         tabs.addTab(spec);
 
-
         upload = view.findViewById(R.id.upload);
         upload.setOnClickListener(onUpload);
 
-        recyclerView = view.findViewById(R.id.myitemView);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        myItemRecyclerView = view.findViewById(R.id.myitemView);
+        tradedItemsRecyclerView = view.findViewById(R.id.traded_items_view);
+
+        myItemRecyclerView.setHasFixedSize(true);
+        myItemRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        tradedItemsRecyclerView.setHasFixedSize(true);
+        tradedItemsRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
         db = FirebaseFirestore.getInstance();
-        items = new ArrayList<Item>();
-        ItemAdapter = new uploadItem.ItemAdapter(getContext(), items);
+        myItems = new ArrayList<>();
+        tradedItems = new ArrayList<>();
+
+        myItemAdapter = new itemAdapter(getContext(), myItems, new selectListener() {
+            @Override
+            public void onItemClick(int position) {
+                // Handle item click if needed
+                Item item = myItems.get(position);
+                MyItemDetails_Fragment myItemDetails_fragment = MyItemDetails_Fragment.newInstance(item);
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.frame, myItemDetails_fragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+
+        tradedItemAdapter = new itemAdapter(getContext(), tradedItems, new selectListener() {
+            @Override
+            public void onItemClick(int position) {
+                // Handle item click if needed
+            }
+        });
+
+        myItemRecyclerView.setAdapter(myItemAdapter);
+        tradedItemsRecyclerView.setAdapter(tradedItemAdapter);
 
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Fetching data...");
         progressDialog.show();
 
-        EventChangeListener();
+        fetchMyItems();
+        fetchTradedItems();
 
-        // Check if there are any new items from the upload activity
-        Intent intent = getActivity().getIntent();
-        String itemDescription = intent.getStringExtra("itemDescription");
-        String imageUri = intent.getStringExtra("imageUri");
-        //String gender = intent.getStringExtra("gender");
-        //String itemType = intent.getStringExtra("itemType");
-        //String color = intent.getStringExtra("color");
-        //String size = intent.getStringExtra("size");
-        //String itemCondition = intent.getStringExtra("itemCondition");
+        return view;
+    }
 
-        if (itemDescription != null && imageUri != null) {
-            Uri itemphoto = Uri.parse(imageUri);
-            items.add(new Item());
-            if (items.size()==1) {
-                recyclerView.setVisibility(View.VISIBLE);
-            }
-            ItemAdapter.notifyItemInserted(items.size() - 1);
-        }
-
-
-
+    private void fetchMyItems() {
         // Get the current user's ID
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         Log.d(TAG, "Current user ID: " + userID);
-        // Create a reference to the Firestore database
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // Create a query against the collection.
-        Query query = db.collection("items").whereEqualTo("userID", userID);
+        Query query = db.collection("items")
+                .whereEqualTo("userID", userID)
+                .whereEqualTo("trade_status", false);
 
         // Add a snapshot listener to the query
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -125,62 +133,62 @@ public class Trade_fragment extends Fragment {
                 }
 
                 // Clear the items ArrayList
-                items.clear();
+                myItems.clear();
 
                 for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                     // Convert the document into an Item object
                     Item item = document.toObject(Item.class);
                     Log.d(TAG, "Item data: " + item.toString());
                     // Add the item to the items ArrayList
-                    items.add(item);
+                    myItems.add(item);
                 }
-                Log.d(TAG, "Items ArrayList size: " + items.size());
+                Log.d(TAG, "Items ArrayList size: " + myItems.size());
                 // Notify the adapter that the data has changed
-                ItemAdapter.notifyDataSetChanged();
+                myItemAdapter.notifyDataSetChanged();
+
+                if (progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
         });
-
-        // Existing code...
-        recyclerView.setAdapter(ItemAdapter);
-        recyclerView.setVisibility(View.INVISIBLE);
-        return view;
     }
 
-    private void EventChangeListener() {
-        db.collection("items")
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        if(error != null){
+    private void fetchTradedItems() {
+        // Get the current user's ID
+        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        Log.d(TAG, "Current user ID: " + userID);
 
-                            if(progressDialog.isShowing())
-                                progressDialog.dismiss();
-                            Log.e("Firestore error", Objects.requireNonNull(error.getMessage()));
-                            return;
-                        }
-                        //assert value != null;
-                        if(value != null){
-                            for (DocumentChange dc : value.getDocumentChanges()){
-                                if(dc.getType() == DocumentChange.Type.ADDED){
-                                    String imageUri = dc.getDocument().getString("imageUri");
-                                    Item item = dc.getDocument().toObject(Item.class);
-                                    item.setImageUri(imageUri);
-                                    if(item.getItemDescription() != null && item.getImageUri() != null){
-                                        items.add(item);
-                                    }
-                                }
-                            }
-                            ItemAdapter.notifyDataSetChanged();
-                            if(progressDialog.isShowing())
-                                progressDialog.dismiss();
-                        }
+        // Create a query against the collection.
+        Query query = db.collection("items")
+                .whereEqualTo("userID", userID)
+                .whereEqualTo("trade_status", true);
 
-                        // Set RecyclerView visibility to VISIBLE after data is loaded
-                        if (!items.isEmpty()) {
-                            recyclerView.setVisibility(View.VISIBLE);
-                        }
-                    }
-                });
+        // Add a snapshot listener to the query
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w(TAG, "Listen failed.", e);
+                    return;
+                }
+
+                // Clear the items ArrayList
+                tradedItems.clear();
+
+                for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                    // Convert the document into an Item object
+                    Item item = document.toObject(Item.class);
+                    Log.d(TAG, "Item data: " + item.toString());
+                    // Add the item to the items ArrayList
+                    tradedItems.add(item);
+                }
+                Log.d(TAG, "Items ArrayList size: " + tradedItems.size());
+                // Notify the adapter that the data has changed
+                tradedItemAdapter.notifyDataSetChanged();
+
+                if (progressDialog.isShowing())
+                    progressDialog.dismiss();
+            }
+        });
     }
 
     private View.OnClickListener onUpload = new View.OnClickListener() {
@@ -199,19 +207,14 @@ public class Trade_fragment extends Fragment {
             if (data != null) {
                 String itemDescription = data.getStringExtra("itemDescription");
                 String imageUri = data.getStringExtra("imageUri");
-                //String gender = data.getStringExtra("gender");
-                //String itemType = data.getStringExtra("itemType");
-                //String color = data.getStringExtra("color");
-                //String size = data.getStringExtra("size");
-                //String itemCondition = data.getStringExtra("itemCondition");
 
                 if (itemDescription != null && imageUri != null) {
                     Item newItem = new Item(itemDescription, imageUri);
-                    items.add(new Item());
-                    if (items.size()==1) {
-                        recyclerView.setVisibility(View.VISIBLE);
+                    myItems.add(newItem);
+                    if (myItems.size() == 1) {
+                        myItemRecyclerView.setVisibility(View.VISIBLE);
                     }
-                    ItemAdapter.notifyItemInserted(items.size() - 1);
+                    myItemAdapter.notifyItemInserted(myItems.size() - 1);
                 }
             }
         }

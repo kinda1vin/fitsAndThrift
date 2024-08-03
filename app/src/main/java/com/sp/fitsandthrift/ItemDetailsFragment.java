@@ -1,13 +1,16 @@
 package com.sp.fitsandthrift;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,10 +38,13 @@ public class ItemDetailsFragment extends Fragment {
     private TextView userName;
     private ImageView profilePic;
     private String imageUri;
+    private Button requestButton;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private String userID;
+    private String uploaderID; // Store the uploader's userID here
+    private Usermodel user;  // Add this line to store user details
     private boolean isCartDisplayed = true;
 
     @Override
@@ -58,6 +64,7 @@ public class ItemDetailsFragment extends Fragment {
         profilePic = rootView.findViewById(R.id.profilePic);
         size = rootView.findViewById(R.id.sizeTextView);
         backButton = rootView.findViewById(R.id.backButton);
+        requestButton = rootView.findViewById(R.id.requestButton);
         db = FirebaseFirestore.getInstance();
 
         userID = auth.getCurrentUser().getUid();
@@ -76,6 +83,37 @@ public class ItemDetailsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 getParentFragmentManager().popBackStack();
+            }
+        });
+
+        requestButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), QuantityList.class);
+                intent.putExtra("itemID", itemID);
+                startActivity(intent);
+            }
+        });
+
+        profilePic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (user != null) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("otherusername", user.getUsername());
+                    bundle.putString("otherusergmail", user.getEmail());
+                    bundle.putString("otheruserid", uploaderID);  // Use uploaderID here
+
+                    otheruser_fragment otherUserFragment = new otheruser_fragment();
+                    otherUserFragment.setArguments(bundle);
+
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                    transaction.replace(R.id.frame, otherUserFragment);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                } else {
+                    Toast.makeText(getContext(), "User information is not available yet", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -147,11 +185,12 @@ public class ItemDetailsFragment extends Fragment {
                         size.setText("Size" + ": " + item.getSize());
                         imageUri = item.getImageUri();
                         Glide.with(getContext()).load(item.getImageUri()).into(itemImage);
-                        fetchUserDetails(item.getUserID());
+                        uploaderID = item.getUserID(); // Store uploader's userID
+                        fetchUserDetails(uploaderID);
                     }
                 }
-            }
 
+            }
         });
     }
 
@@ -161,12 +200,21 @@ public class ItemDetailsFragment extends Fragment {
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 if (!queryDocumentSnapshots.isEmpty()) {
                     DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
-                    Usermodel user = documentSnapshot.toObject(Usermodel.class);
+                    user = documentSnapshot.toObject(Usermodel.class);
                     if (user != null) {
                         userName.setText("Uploaded By" + ": " + user.getUsername());
                         Glide.with(getContext()).load(user.getProfilePicUrl()).circleCrop().into(profilePic);
+                    } else {
+                        Toast.makeText(getContext(), "User data is not available", Toast.LENGTH_SHORT).show();
                     }
+                } else {
+                    Toast.makeText(getContext(), "User not found", Toast.LENGTH_SHORT).show();
                 }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getContext(), "Failed to fetch user details", Toast.LENGTH_SHORT).show();
             }
         });
     }

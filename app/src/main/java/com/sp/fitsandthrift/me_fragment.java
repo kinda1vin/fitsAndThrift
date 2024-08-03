@@ -1,7 +1,6 @@
 package com.sp.fitsandthrift;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -134,24 +133,32 @@ public class me_fragment extends Fragment {
     }
 
     private void updateAboutFragment(String email, String phone) {
-        about_fragment aboutFragment = (about_fragment) getChildFragmentManager().findFragmentById(R.id.about_tab);
-        if (aboutFragment != null) {
-            aboutFragment.updateDetails(email, phone);
+        if (isAdded()) {
+            about_fragment aboutFragment = (about_fragment) getChildFragmentManager().findFragmentById(R.id.about_tab);
+            if (aboutFragment != null) {
+                aboutFragment.updateDetails(email, phone);
+            } else {
+                aboutFragment = new about_fragment();
+                Bundle args = new Bundle();
+                args.putString("mail", email);
+                args.putString("phone", phone);
+                aboutFragment.setArguments(args);
+                FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+                transaction.replace(R.id.about_tab, aboutFragment);
+                transaction.commit();
+            }
         } else {
-            aboutFragment = new about_fragment();
-            Bundle args = new Bundle();
-            args.putString("mail", email);
-            args.putString("phone", phone);
-            aboutFragment.setArguments(args);
-            FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-            transaction.replace(R.id.about_tab, aboutFragment);
-            transaction.commit();
+            Log.e("me_fragment", "Fragment not attached yet");
         }
     }
 
     private void loadReviewFragment() {
-        review_fragment reviewFragment = new review_fragment();
-        getChildFragmentManager().beginTransaction().replace(R.id.review_tab, reviewFragment).commit();
+        if (isAdded()) {
+            review_fragment reviewFragment = new review_fragment();
+            getChildFragmentManager().beginTransaction().replace(R.id.review_tab, reviewFragment).commit();
+        } else {
+            Log.e("me_fragment", "Fragment not attached yet");
+        }
     }
 
     @Override

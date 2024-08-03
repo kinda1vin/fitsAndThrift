@@ -44,7 +44,6 @@ public class itemAdapter extends RecyclerView.Adapter<itemAdapter.MyViewHolder> 
         holder.itemDescription.setText(item.getItemDescription());
 
         Glide.with(context).load(item.getImageUri()).into(holder.itemImage);
-
     }
 
     @Override

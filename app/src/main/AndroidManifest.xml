@@ -58,11 +58,17 @@
         <activity
             android:name=".TradeOfferMatch"
             android:exported="false" />
+        <activity
+            android:name=".TradeRequestReview"
+            android:exported="false" />
 
         <!-- Add the WriteReviewActivity declaration here -->
         <activity
             android:name=".WriteReviewActivity"
             android:exported="false" />
+        <activity
+            android:name=".MyItemDetails_Fragment"
+            android:exported="false"/>
 
         <service android:name=".FCMNotificationService" android:exported="false">
             <intent-filter>

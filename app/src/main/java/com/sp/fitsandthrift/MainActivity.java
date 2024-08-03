@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
         reviewFragment = new review_fragment();
         tradeFragment = new Trade_fragment();
         chatFragment = new ChatFragment();
+        meFragment= new me_fragment();
 
         bottomNavigationView = findViewById(R.id.nav);
 
@@ -72,16 +73,19 @@ public class MainActivity extends AppCompatActivity {
         // Set default selected item
         bottomNavigationView.setSelectedItemId(R.id.home);
 
-
-        // Set default fragment
-
+        // Handle Intent extras to load specific fragments
+        boolean loadMeFragment = getIntent().getBooleanExtra("loadMeFragment", false);
         boolean loadChatFragment = getIntent().getBooleanExtra("loadChatFragment", false);
-        if (loadChatFragment) {
+
+        if (loadMeFragment) {
+            bottomNavigationView.setSelectedItemId(R.id.me);
+            loadFragment(meFragment, true);
+        } else if (loadChatFragment) {
             bottomNavigationView.setSelectedItemId(R.id.chat);
-            loadFragment(new ChatFragment(), true);
+            loadFragment(chatFragment, true);
         } else {
             bottomNavigationView.setSelectedItemId(R.id.home);
-            loadFragment(new Home_Fragment(), true);
+            loadFragment(homeFragment, true);
         }
 
         bottomNavigationView.getMenu().findItem(R.id.home).setIcon(R.drawable.home1);
@@ -94,16 +98,16 @@ public class MainActivity extends AppCompatActivity {
                 resetIcons();
 
                 if (itemId == R.id.home) {
-                    loadFragment(new Home_Fragment(), false);
+                    loadFragment(homeFragment, false);
                     item.setIcon(R.drawable.home1); // Change to selected icon
                 } else if (itemId == R.id.trade) {
-                    loadFragment(new Trade_fragment(), false);
+                    loadFragment(tradeFragment, false);
                     item.setIcon(R.drawable.activetrade); // Change to selected icon
                 } else if (itemId == R.id.noti) {
-                    loadFragment(new notification_fragment(), false);
+                    loadFragment(notificationFragment, false);
                     item.setIcon(R.drawable.bell); // Change to selected icon
                 } else if (itemId == R.id.chat) {
-                    loadFragment(new ChatFragment(), false);
+                    loadFragment(chatFragment, false);
                     item.setIcon(R.drawable.cmt); // Change to selected icon
                 } else if (itemId == R.id.me) {
                     if (user != null) {
@@ -117,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+
         getFCMToken();
     }
 
@@ -162,12 +167,12 @@ public class MainActivity extends AppCompatActivity {
         chatItem.setIcon(R.drawable.chat); // Default icon for chat
 
     }
-    void getFCMToken(){
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
-            if(task.isSuccessful()){
-                String token= task.getResult();
-                Log.i("My token",token);
 
+    void getFCMToken() {
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                String token = task.getResult();
+                Log.i("My token", token);
             }
         });
     }

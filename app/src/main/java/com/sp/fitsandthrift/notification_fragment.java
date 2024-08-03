@@ -1,11 +1,14 @@
 package com.sp.fitsandthrift;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +44,19 @@ public class notification_fragment extends Fragment {
         recycleview = view.findViewById(R.id.notirecycle);
         recycleview.setLayoutManager(new LinearLayoutManager(getContext()));
         recycleview.setHasFixedSize(true);
-        notiRecycleAdapter = new NotiRecycleAdapter(getContext(), NotiArrayList);
+        notiRecycleAdapter = new NotiRecycleAdapter(getContext(), NotiArrayList, new NotiRecycleAdapter.OnNotificationClickListener() {
+            @Override
+            public void onNotificationClick(Notification notification) {
+                if (notification != null) {
+                    Intent intent = new Intent(getContext(), TradeRequestReview.class);
+                    intent.putStringArrayListExtra("selectedItems", notification.getSelectedItems());
+                    intent.putExtra("desiredItemId", notification.getDesiredItemId());
+                    startActivity(intent);
+                } else {
+                    Log.e("notification_fragment", "Notification object is null");
+                }
+            }
+        });
         recycleview.setAdapter(notiRecycleAdapter);
 
         fetchNotifications();
@@ -49,27 +64,36 @@ public class notification_fragment extends Fragment {
 
     private void fetchNotifications() {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        Log.d("notification_fragment", "Fetching notifications for user: " + userId);
+
         db.collection("users").document(userId).collection("notifications")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                         if (error != null) {
+                            Log.e("notification_fragment", "Listen failed.", error);
                             return;
                         }
 
                         NotiArrayList.clear(); // Clear the list before adding updated notifications
-                        for (DocumentChange dc : value.getDocumentChanges()) {
-                            switch (dc.getType()) {
-                                case ADDED:
-                                    NotiArrayList.add(dc.getDocument().toObject(Notification.class));
-                                    break;
-                                case MODIFIED:
-                                    // Handle modification if needed
-                                    break;
-                                case REMOVED:
-                                    // Handle removal if needed
-                                    break;
+                        if (value != null) {
+                            for (DocumentChange dc : value.getDocumentChanges()) {
+                                switch (dc.getType()) {
+                                    case ADDED:
+                                        Notification notification = dc.getDocument().toObject(Notification.class);
+                                        NotiArrayList.add(notification);
+                                        Log.d("notification_fragment", "Notification added: " + notification.getMessage());
+                                        break;
+                                    case MODIFIED:
+                                        // Handle modification if needed
+                                        break;
+                                    case REMOVED:
+                                        // Handle removal if needed
+                                        break;
+                                }
                             }
+                        } else {
+                            Log.d("notification_fragment", "No notifications found");
                         }
 
                         notiRecycleAdapter.notifyDataSetChanged();

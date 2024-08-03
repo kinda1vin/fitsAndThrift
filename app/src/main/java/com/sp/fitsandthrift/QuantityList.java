@@ -68,18 +68,20 @@ public class QuantityList extends AppCompatActivity implements QuantityListener{
     private void fetchItemList(){
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         CollectionReference collectionReference = db.collection("items");
-        collectionReference.whereEqualTo("userID", currentUserId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-                    for(QueryDocumentSnapshot document : task.getResult()){
-                        Item item = document.toObject(Item.class);
-                        quantityList.add(item);
+        collectionReference.whereEqualTo("userID", currentUserId)
+                .whereEqualTo("trade_status", false)
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            for(QueryDocumentSnapshot document : task.getResult()){
+                                Item item = document.toObject(Item.class);
+                                quantityList.add(item);
+                            }
+                            quantityAdapter.notifyDataSetChanged();
+                        }
                     }
-                    quantityAdapter.notifyDataSetChanged();
-                }
-            }
-        });
+                });
     }
 
     private void setquantityRecyclerView() {

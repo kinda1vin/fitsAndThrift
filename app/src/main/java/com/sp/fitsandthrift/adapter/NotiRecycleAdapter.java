@@ -21,10 +21,15 @@ public class NotiRecycleAdapter extends RecyclerView.Adapter<NotiRecycleAdapter.
 
     private Context context;
     private ArrayList<Notification> NotiArrayList;
+    private OnNotificationClickListener onNotificationClickListener;
 
-    public NotiRecycleAdapter(Context context, ArrayList<Notification> NotiArrayList) {
+    public interface OnNotificationClickListener {
+        void onNotificationClick(Notification notification);
+    }
+    public NotiRecycleAdapter(Context context, ArrayList<Notification> NotiArrayList, OnNotificationClickListener listener) {
         this.context = context;
         this.NotiArrayList = NotiArrayList;
+        this.onNotificationClickListener = listener;
     }
 
     @NonNull
@@ -50,6 +55,15 @@ public class NotiRecycleAdapter extends RecyclerView.Adapter<NotiRecycleAdapter.
                 .placeholder(R.drawable.profile)  // Placeholder image
                 .error(R.drawable.profile)  // Error image
                 .into(holder.profileImage);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (notification != null) {
+                    onNotificationClickListener.onNotificationClick(notification);
+                }
+            }
+        });
     }
 
     @Override

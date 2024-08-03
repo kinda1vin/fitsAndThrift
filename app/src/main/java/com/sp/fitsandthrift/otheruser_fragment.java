@@ -1,7 +1,6 @@
 package com.sp.fitsandthrift;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -57,11 +56,7 @@ public class otheruser_fragment extends Fragment {
         initializeViews(view);
         setupTabHost(view);
         if (getArguments() != null) {
-            String username = getArguments().getString(ARG_OTHERUSERNAME);
-            String email = getArguments().getString(ARG_OTHERUSERGMAIL);
             String userId = getArguments().getString(ARG_OTHERUSERID);
-            usernameTextView.setText(username);
-            emailTextView.setText(email);
             loadUserData(userId);
         }
         return view;
@@ -113,12 +108,15 @@ public class otheruser_fragment extends Fragment {
     }
 
     private void updateUI(Usermodel usermodel) {
-        usernameTextView.setText(usermodel.getUsername());
-        if (!TextUtils.isEmpty(usermodel.getProfilePicUrl())) {
-            Uri profilePicUri = Uri.parse(usermodel.getProfilePicUrl());
-            setProfilePic(getActivity(), profilePicUri, profilePic);
+        if (usermodel != null) {
+            usernameTextView.setText(usermodel.getUsername());
+            emailTextView.setText(usermodel.getEmail());
+            if (!TextUtils.isEmpty(usermodel.getProfilePicUrl())) {
+                Uri profilePicUri = Uri.parse(usermodel.getProfilePicUrl());
+                setProfilePic(getActivity(), profilePicUri, profilePic);
+            }
+            updateAboutFragment(usermodel.getEmail(), usermodel.getPhoneNumber());
         }
-        updateAboutFragment(usermodel.getEmail(), usermodel.getPhoneNumber());
     }
 
     private void updateAboutFragment(String email, String phone) {

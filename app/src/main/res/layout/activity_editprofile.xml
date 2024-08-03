@@ -6,16 +6,26 @@
     android:layout_height="match_parent"
     tools:context=".editprofile">
 
+    <!-- Back Button -->
+    <ImageButton
+        android:id="@+id/back_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="16dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        app:srcCompat="@drawable/baseline_arrow_back_24"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@id/fragment_container1"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/back_button">
 
         <ImageView
             android:id="@+id/pic"
@@ -40,7 +50,6 @@
             android:inputType="text"
             android:paddingVertical="10dp" />
 
-        <!-- Replace EditText for gender with Spinner -->
         <Spinner
             android:id="@+id/gender_spinner"
             android:layout_width="300dp"
@@ -73,23 +82,6 @@
             app:cornerRadius="30dp" />
     </LinearLayout>
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragment_container1"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/fragment_container2"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
-
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragment_container2"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/fragment_container1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
-
     <ProgressBar
         android:id="@+id/profile_progress_bar"
         style="?android:attr/progressBarStyle"
@@ -98,8 +90,9 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintVertical_bias="0.166" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

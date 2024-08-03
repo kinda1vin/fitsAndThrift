@@ -2,8 +2,6 @@ package com.sp.fitsandthrift;
 
 import static android.content.ContentValues.TAG;
 
-import static com.sp.fitsandthrift.Trade_fragment.items;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,7 +27,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -89,7 +86,7 @@ public class uploadItem extends AppCompatActivity {
         btnupload = findViewById(R.id.upload);
         btnupload.setOnClickListener(onSave);
 
-        imgbutton = (ImageButton)findViewById(R.id.imgbutton);
+        imgbutton = findViewById(R.id.imgbutton);
         imgbutton.setOnClickListener(onUpload);
 
         backIcon = findViewById(R.id.backIcon);
@@ -166,26 +163,17 @@ public class uploadItem extends AppCompatActivity {
             String brandnamestr = itemDescription.getText().toString();
             String sizestr = size.getText().toString();
             String colorstr = color.getText().toString();
-            String conditionstr = itemCondition.toString();
-            String genderstr = itemGender.toString();
-            String itemtypestr = itemType.toString();
+            String conditionstr = itemCondition.getSelectedItem().toString();
+            String genderstr = itemGender.getSelectedItem().toString();
+            String itemtypestr = itemType.getSelectedItem().toString();
 
             if (TextUtils.isEmpty(brandnamestr) || TextUtils.isEmpty(sizestr) || TextUtils.isEmpty(colorstr) || TextUtils.isEmpty(conditionstr) || TextUtils.isEmpty(genderstr) || TextUtils.isEmpty(itemtypestr)) {
                 Toast.makeText(getApplicationContext(), "Please fill up the details", Toast.LENGTH_LONG).show();
             } else if (imageUri == null) {
                 Toast.makeText(getApplicationContext(), "Please upload the photo from gallery", Toast.LENGTH_LONG).show();
             } else {
-                Intent intent = new Intent();
-                intent.putExtra("itemDescription", brandnamestr);
-                intent.putExtra("imageUri", imageUri.toString());
-                //intent.putExtra("gender", genderstr);
-                //intent.putExtra("itemType", itemtypestr);
-                //intent.putExtra("color", colorstr);
-                //intent.putExtra("size", sizestr);
-                //intent.putExtra("itemCondition", conditionstr);
-                setResult(RESULT_OK, intent);
-                finish();
                 insertdata();
+                finish();
             }
         }
     };
@@ -253,22 +241,14 @@ public class uploadItem extends AppCompatActivity {
         @NonNull
         @Override
         public ItemAdapter.itemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
             View view = LayoutInflater.from(context).inflate(R.layout.item_layout,parent, false);
-
             return new itemViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(@NonNull ItemAdapter.itemViewHolder holder, int position) {
             Item item = items.get(position);
-
-            holder.itemDescription.setText(item.itemDescription);
-            //holder.itemCondition.setText(item.itemCondition);
-            //holder.itemType.setText(item.itemType);
-            //holder.gender.setText(item.itemGender);
-            //holder.color.setText(item.color);
-            //holder.size.setText(item.size);
+            holder.itemDescription.setText(item.getItemDescription());
             Uri itemUri = item.getImageUriAsUri();
             if (itemUri != null) {
                 Glide.with(context).load(itemUri).into(holder.imageUri);
@@ -282,28 +262,20 @@ public class uploadItem extends AppCompatActivity {
         public int getItemCount() {
             return items.size();
         }
+
         public class itemViewHolder extends RecyclerView.ViewHolder{
             ImageView imageUri;
             TextView itemDescription;
-            //TextView itemType;
-            //TextView itemCondition;
-            //TextView color;
-            //TextView size;
-            //TextView gender;
 
             public itemViewHolder(@NonNull View itemView) {
                 super(itemView);
                 imageUri = itemView.findViewById(R.id.imageUri);
                 itemDescription = itemView.findViewById(R.id.itemDescription);
-                //itemType = itemView.findViewById(R.id.itemType);
-                //itemCondition = itemView.findViewById(R.id.itemCondition);
-                //color = itemView.findViewById(R.id.color);
-                //size = itemView.findViewById(R.id.size);
-                //gender = itemView.findViewById(R.id.itemGender);
             }
         }
     }
-    public void insertdata(){
+
+    public void insertdata() {
         // Create a storage reference
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
@@ -331,7 +303,7 @@ public class uploadItem extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     Uri downloadUri = task.getResult();
 
-                    //Get the current user's ID
+                    // Get the current user's ID
                     String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
                     // Create a new document and get its ID
@@ -339,7 +311,7 @@ public class uploadItem extends AppCompatActivity {
                     String itemID = newItemRef.getId();
 
                     // Store the download URL in Firestore
-                    Map<String,Object> items = new HashMap<>();
+                    Map<String, Object> items = new HashMap<>();
                     items.put("itemDescription", itemDescription.getText().toString().trim());
                     items.put("color", color.getText().toString().trim());
                     items.put("size", size.getText().toString().trim());
@@ -347,8 +319,9 @@ public class uploadItem extends AppCompatActivity {
                     items.put("itemCondition", itemCondition.getSelectedItem().toString());
                     items.put("itemType", itemType.getSelectedItem().toString());
                     items.put("imageUri", downloadUri.toString());
-                    items.put("userID", userID);// Add the userID to the item
+                    items.put("userID", userID); // Add the userID to the item
                     items.put("itemID", itemID);
+                    items.put("trade_status", false); // Set trade_status to false by default
 
                     newItemRef.set(items)
                             .addOnCompleteListener(new OnCompleteListener<Void>() {

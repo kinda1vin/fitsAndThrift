@@ -2,7 +2,10 @@ package com.sp.fitsandthrift;
 
 import android.net.Uri;
 
-public class Item {
+import java.io.Serializable;
+
+public class Item implements Serializable {
+    private static final long serialVersionUID = 1L;
     String itemDescription;
     String imageUri;
     String itemGender;
@@ -13,6 +16,7 @@ public class Item {
     String gender;
     String userID;
     String itemID;
+    boolean trade_status;
 
     public String getItemID() {
         return itemID;
@@ -114,4 +118,12 @@ public class Item {
             return null;
         }
     }
+    public boolean isTrade_status() {
+        return trade_status;
+    }
+
+    public void setTrade_status(boolean trade_status) {
+        this.trade_status = trade_status;
+    }
+
 }

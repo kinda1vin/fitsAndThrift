@@ -1,6 +1,7 @@
 package com.sp.fitsandthrift;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -11,19 +12,29 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.sp.fitsandthrift.model.Notification;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class TradeOfferMatch extends AppCompatActivity {
 
@@ -36,6 +47,7 @@ public class TradeOfferMatch extends AppCompatActivity {
     private ArrayList<Item> desiredItems = new ArrayList<>();
     private static final String PREFS_NAME = "trade_prefs";
     private static final String ITEM_ID_KEY = "item_id";
+    private static final String SERVER_KEY = "YOUR_SERVER_KEY"; // Replace with your FCM server key
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1001;
 
     @Override
@@ -67,13 +79,15 @@ public class TradeOfferMatch extends AppCompatActivity {
         confirmButton.setOnClickListener(v -> {
             if (!desiredItems.isEmpty()) {
                 Item desiredItem = desiredItems.get(0);  // Assuming there's only one desired item
-                sendNotificationToOwner(desiredItem.getUserID());
+                sendNotificationToOwner(desiredItem.getUserID(), selectedItemIds, desiredItem.getItemID());
                 Toast.makeText(TradeOfferMatch.this, "Notification sent to owner", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(TradeOfferMatch.this, "No desired item selected", Toast.LENGTH_SHORT).show();
             }
         });
+
     }
+
 
     private String getItemIDFromPreferences() {
         SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
@@ -87,7 +101,7 @@ public class TradeOfferMatch extends AppCompatActivity {
                     Item item = document.toObject(Item.class);
                     selectedItems.add(item);
                 }
-                setupSelectedItemsRecyclerView();
+                setupselectedItemsRecyclerView();
             }
         });
     }
@@ -99,48 +113,102 @@ public class TradeOfferMatch extends AppCompatActivity {
                     Item item = document.toObject(Item.class);
                     desiredItems.add(item);
                 }
-                setupDesiredItemsRecyclerView();
+                setupdesiredItemsRecyclerView();
             }
         });
     }
 
-    private void setupSelectedItemsRecyclerView() {
+    private void setupselectedItemsRecyclerView() {
         selectedItemsRecyclerView.setHasFixedSize(true);
         selectedItemsRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         selectedItemsAdapter = new SelectedItemsAdapter(this, selectedItems);
         selectedItemsRecyclerView.setAdapter(selectedItemsAdapter);
     }
 
-    private void setupDesiredItemsRecyclerView() {
+    private void setupdesiredItemsRecyclerView() {
         desiredItemsRecyclerView.setHasFixedSize(true);
         desiredItemsRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         desiredItemsAdapter = new DesiredItemsAdapter(this, desiredItems);
         desiredItemsRecyclerView.setAdapter(desiredItemsAdapter);
     }
 
-    private void sendNotificationToOwner(String ownerId) {
-        // Get the current user's details
+    private void sendNotificationToOwner(String ownerId, ArrayList<String> selectedItemIds, String desiredItemId) {
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        db.collection("users").document(currentUserId).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                String senderUsername = task.getResult().getString("username");
-                String senderProfilePicUrl = task.getResult().getString("profilePicUrl");
 
-                // Create a notification with the sender's details
-                String message = senderUsername + " sends you a trade request";
-                Notification notification = new Notification(senderUsername, message, senderProfilePicUrl);
+        // Fetch current user's details
+        db.collection("users").document(currentUserId).get().addOnCompleteListener(userTask -> {
+            if (userTask.isSuccessful() && userTask.getResult() != null) {
+                String senderUsername = userTask.getResult().getString("username");
+                String senderProfilePicUrl = userTask.getResult().getString("profilePicUrl");
+                String message = senderUsername + " has sent you a trade request";
 
-                // Add the notification to the owner's collection
-                db.collection("users").document(ownerId).collection("notifications").add(notification)
-                        .addOnCompleteListener(task1 -> {
-                            if (task1.isSuccessful()) {
-                                Log.d("TradeOfferMatch", "Notification added to owner's collection");
-                            } else {
-                                Log.e("TradeOfferMatch", "Failed to add notification", task1.getException());
-                            }
-                        });
+                // Fetch the owner's FCM token and create the notification
+                db.collection("users").document(ownerId).get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        String token = task.getResult().getString("fcmToken");
+                        if (token != null) {
+                            sendFCMNotification(token);
+                        } else {
+                            Log.e("TradeOfferMatch", "FCM token is null for owner: " + ownerId);
+                        }
+
+                        // Create a notification entry in the Firestore database
+                        Map<String, Object> notification = new HashMap<>();
+                        notification.put("senderUsername", senderUsername);
+                        notification.put("message", message);
+                        notification.put("senderProfilePicUrl", senderProfilePicUrl);
+                        notification.put("ownerId", ownerId);
+                        notification.put("selectedItems", selectedItemIds);
+                        notification.put("desiredItemId", desiredItemId);
+
+                        db.collection("users").document(ownerId).collection("notifications")
+                                .add(notification)
+                                .addOnSuccessListener(documentReference -> Log.d("TradeOfferMatch", "Notification stored successfully"))
+                                .addOnFailureListener(e -> Log.e("TradeOfferMatch", "Error storing notification", e));
+                    } else {
+                        Log.e("TradeOfferMatch", "Failed to fetch FCM token for owner: " + ownerId, task.getException());
+                    }
+                });
             } else {
-                Log.e("TradeOfferMatch", "Failed to get sender details", task.getException());
+                Log.e("TradeOfferMatch", "Failed to fetch sender details", userTask.getException());
+            }
+        });
+    }
+
+
+    private void sendFCMNotification(String token) {
+        OkHttpClient client = new OkHttpClient();
+        MediaType JSON = MediaType.get("application/json; charset=utf-8");
+
+        JSONObject json = new JSONObject();
+        try {
+            json.put("to", token);
+            JSONObject notification = new JSONObject();
+            notification.put("title", "Trade Offer");
+            notification.put("body", "You have a new trade offer!");
+            json.put("notification", notification);
+        } catch (Exception e) {
+            Log.e("TradeOfferMatch", "Failed to create JSON payload", e);
+            return;
+        }
+
+        RequestBody body = RequestBody.create(json.toString(), JSON);
+        Request request = new Request.Builder()
+                .url("https://fcm.googleapis.com/fcm/send")
+                .post(body)
+                .addHeader("Authorization", "key=" + SERVER_KEY)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
+                Log.e("TradeOfferMatch", "Failed to send notification", e);
+            }
+
+            @Override
+            public void onResponse(@NonNull okhttp3.Call call, @NonNull Response response) throws IOException {
+                Log.d("TradeOfferMatch", "Notification sent: " + response.body().string());
             }
         });
     }
@@ -158,4 +226,5 @@ public class TradeOfferMatch extends AppCompatActivity {
             }
         }
     }
+
 }
