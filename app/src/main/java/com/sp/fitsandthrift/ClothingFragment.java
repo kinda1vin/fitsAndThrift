@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,7 +25,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 import com.sp.fitsandthrift.adapter.itemAdapter;
-import com.sp.fitsandthrift.Item;
 
 public class ClothingFragment extends Fragment implements selectListener {
     private ImageView backImageView;
@@ -37,6 +37,7 @@ public class ClothingFragment extends Fragment implements selectListener {
     private FirebaseFirestore db;
     private String category;
     private SearchView searchView;
+    private ItemViewModel itemViewModel; // new code
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,11 +57,24 @@ public class ClothingFragment extends Fragment implements selectListener {
         itemAdapter = new itemAdapter(getContext(), clothingItemList, this);
         recyclerView.setAdapter(itemAdapter);
 
+        itemViewModel = new ViewModelProvider(this).get(ItemViewModel.class);
+
         if (getArguments() != null) {
             category = getArguments().getString("category", "ALL");
         }
-        retrieveClothingItems();
 
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        String currentUserId = mAuth.getCurrentUser().getUid();
+
+        itemViewModel.getItems().observe(getViewLifecycleOwner(), items -> {
+            clothingItemList.clear();
+            if (items != null) {
+                clothingItemList.addAll(items);
+            }
+            itemAdapter.updateList(clothingItemList);
+        });
+
+        itemViewModel.retrieveItems("Clothing", category, currentUserId);
 
         // Navigate to Home
         backImageView.setOnClickListener(new View.OnClickListener() {
@@ -112,10 +126,14 @@ public class ClothingFragment extends Fragment implements selectListener {
         return rootView;
     }
 
+
     private void filterItems(String newText) {
         List<Item> filteredList = new ArrayList<>();
-        for (Item item : clothingItemList) {
-            if (item.getItemDescription().toLowerCase().contains(newText.toLowerCase())) {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        String currentUserId = mAuth.getCurrentUser().getUid();
+
+        for (Item item : clothingItemList) { // Use appropriate list for each fragment
+            if (item.getItemDescription().toLowerCase().contains(newText.toLowerCase()) && !item.getUserID().equals(currentUserId)) {
                 filteredList.add(item);
             }
         }
@@ -171,8 +189,7 @@ public class ClothingFragment extends Fragment implements selectListener {
     }
 
     @Override
-    public void onItemClick(int position) {
-        Item item = clothingItemList.get(position);
+    public void onItemClick(Item item) {
         Bundle bundle = new Bundle();
         bundle.putString("itemID", item.getItemID());
         bundle.putString("itemDescription", item.getItemDescription());
@@ -191,5 +208,13 @@ public class ClothingFragment extends Fragment implements selectListener {
         fragmentTransaction.replace(R.id.fragment_container, itemDetailsFragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        String currentUserId = mAuth.getCurrentUser().getUid();
+        itemViewModel.retrieveItems("Clothing", category, currentUserId);
     }
 }

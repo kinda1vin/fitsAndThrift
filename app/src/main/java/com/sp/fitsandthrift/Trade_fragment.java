@@ -81,9 +81,7 @@ public class Trade_fragment extends Fragment {
 
         myItemAdapter = new itemAdapter(getContext(), myItems, new selectListener() {
             @Override
-            public void onItemClick(int position) {
-                // Handle item click if needed
-                Item item = myItems.get(position);
+            public void onItemClick(Item item) {
                 MyItemDetails_Fragment myItemDetails_fragment = MyItemDetails_Fragment.newInstance(item);
                 getParentFragmentManager().beginTransaction()
                         .replace(R.id.frame, myItemDetails_fragment)
@@ -94,7 +92,7 @@ public class Trade_fragment extends Fragment {
 
         tradedItemAdapter = new itemAdapter(getContext(), tradedItems, new selectListener() {
             @Override
-            public void onItemClick(int position) {
+            public void onItemClick(Item item) {
                 // Handle item click if needed
             }
         });
@@ -114,16 +112,13 @@ public class Trade_fragment extends Fragment {
     }
 
     private void fetchMyItems() {
-        // Get the current user's ID
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         Log.d(TAG, "Current user ID: " + userID);
 
-        // Create a query against the collection.
         Query query = db.collection("items")
                 .whereEqualTo("userID", userID)
                 .whereEqualTo("trade_status", false);
 
-        // Add a snapshot listener to the query
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
@@ -132,18 +127,14 @@ public class Trade_fragment extends Fragment {
                     return;
                 }
 
-                // Clear the items ArrayList
                 myItems.clear();
 
                 for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                    // Convert the document into an Item object
                     Item item = document.toObject(Item.class);
                     Log.d(TAG, "Item data: " + item.toString());
-                    // Add the item to the items ArrayList
                     myItems.add(item);
                 }
                 Log.d(TAG, "Items ArrayList size: " + myItems.size());
-                // Notify the adapter that the data has changed
                 myItemAdapter.notifyDataSetChanged();
 
                 if (progressDialog.isShowing())
@@ -153,16 +144,13 @@ public class Trade_fragment extends Fragment {
     }
 
     private void fetchTradedItems() {
-        // Get the current user's ID
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         Log.d(TAG, "Current user ID: " + userID);
 
-        // Create a query against the collection.
         Query query = db.collection("items")
                 .whereEqualTo("userID", userID)
                 .whereEqualTo("trade_status", true);
 
-        // Add a snapshot listener to the query
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
@@ -171,18 +159,14 @@ public class Trade_fragment extends Fragment {
                     return;
                 }
 
-                // Clear the items ArrayList
                 tradedItems.clear();
 
                 for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                    // Convert the document into an Item object
                     Item item = document.toObject(Item.class);
                     Log.d(TAG, "Item data: " + item.toString());
-                    // Add the item to the items ArrayList
                     tradedItems.add(item);
                 }
                 Log.d(TAG, "Items ArrayList size: " + tradedItems.size());
-                // Notify the adapter that the data has changed
                 tradedItemAdapter.notifyDataSetChanged();
 
                 if (progressDialog.isShowing())
@@ -203,7 +187,6 @@ public class Trade_fragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == getActivity().RESULT_OK) {
-            // Check if there are any new items from the upload activity
             if (data != null) {
                 String itemDescription = data.getStringExtra("itemDescription");
                 String imageUri = data.getStringExtra("imageUri");

@@ -37,14 +37,14 @@ public class ItemDetailsFragment extends Fragment {
     private TextView size;
     private TextView userName;
     private ImageView profilePic;
-    private String imageUri;
     private Button requestButton;
+    private String imageUri;
+    private Usermodel user;
+    private String uploaderID;  // Store the uploader's userID here
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private String userID;
-    private String uploaderID; // Store the uploader's userID here
-    private Usermodel user;  // Add this line to store user details
     private boolean isCartDisplayed = true;
 
     @Override
@@ -120,15 +120,13 @@ public class ItemDetailsFragment extends Fragment {
         cartIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                {
-                    addToCart();
+                addToCart();
 
-                    if (isCartDisplayed) {
-                        // change icon
-                        cartIcon.setImageResource(R.drawable.cart_filled);
-                    } else {
-                        cartIcon.setImageResource(R.drawable.cart_notfilled);
-                    }
+                if (isCartDisplayed) {
+                    // change icon
+                    cartIcon.setImageResource(R.drawable.cart_filled);
+                } else {
+                    cartIcon.setImageResource(R.drawable.cart_notfilled);
                 }
             }
         });
@@ -170,39 +168,38 @@ public class ItemDetailsFragment extends Fragment {
     }
 
     private void fetchItemDetails(String itemID) {
-        db.collection("items").whereEqualTo("itemID", itemID).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        db.collection("items").document(itemID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                if (!queryDocumentSnapshots.isEmpty()) {
-                    DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
                     Item item = documentSnapshot.toObject(Item.class);
                     if (item != null) {
                         itemDescription.setText(item.getItemDescription());
-                        color.setText("Color" + ": " + item.getColor());
-                        gender.setText("Gender" + ": " + item.getItemGender());
-                        itemCondition.setText("Item Condition" + ": " + item.getItemCondition());
-                        itemType.setText("Type" + ": " + item.getItemType());
-                        size.setText("Size" + ": " + item.getSize());
+                        color.setText("Color: " + item.getColor());
+                        gender.setText("Gender: " + item.getItemGender());
+                        itemCondition.setText("Item Condition: " + item.getItemCondition());
+                        itemType.setText("Type: " + item.getItemType());
+                        size.setText("Size: " + item.getSize());
                         imageUri = item.getImageUri();
                         Glide.with(getContext()).load(item.getImageUri()).into(itemImage);
                         uploaderID = item.getUserID(); // Store uploader's userID
                         fetchUserDetails(uploaderID);
                     }
+                } else {
+                    Toast.makeText(getContext(), "Item not found", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
     }
 
     private void fetchUserDetails(String userID) {
-        db.collection("users").whereEqualTo("currentUserId", userID).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        db.collection("users").document(userID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                if (!queryDocumentSnapshots.isEmpty()) {
-                    DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
                     user = documentSnapshot.toObject(Usermodel.class);
                     if (user != null) {
-                        userName.setText("Uploaded By" + ": " + user.getUsername());
+                        userName.setText("Uploaded By: " + user.getUsername());
                         Glide.with(getContext()).load(user.getProfilePicUrl()).circleCrop().into(profilePic);
                     } else {
                         Toast.makeText(getContext(), "User data is not available", Toast.LENGTH_SHORT).show();

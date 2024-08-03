@@ -1,5 +1,5 @@
 package com.sp.fitsandthrift;
 
 public interface selectListener {
-    void onItemClick(int position);
+    void onItemClick(Item item);
 }

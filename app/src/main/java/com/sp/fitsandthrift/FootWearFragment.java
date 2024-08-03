@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sp.fitsandthrift.adapter.itemAdapter;
-import com.sp.fitsandthrift.model.Usermodel;
 
 
 public class FootWearFragment extends Fragment implements selectListener {
@@ -40,6 +40,7 @@ public class FootWearFragment extends Fragment implements selectListener {
     private SearchView searchView;
 
     private String category;
+    private ItemViewModel itemViewModel; // new code
 
 
     @Override
@@ -60,11 +61,23 @@ public class FootWearFragment extends Fragment implements selectListener {
         itemAdapter = new itemAdapter(getContext(), footwearItemList, this);
         recyclerView.setAdapter(itemAdapter);
 
+        itemViewModel = new ViewModelProvider(this).get(ItemViewModel.class);
+
         if (getArguments() != null) {
             category = getArguments().getString("category", "ALL");
         }
 
-        retrieveFootwearItems();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        String currentUserId = mAuth.getCurrentUser().getUid();
+
+        itemViewModel.getItems().observe(getViewLifecycleOwner(), items -> {
+            footwearItemList.clear();
+            if (items != null) {
+                footwearItemList.addAll(items);
+            }
+            itemAdapter.updateList(footwearItemList);
+        });
+        itemViewModel.retrieveItems("Footwear", category, currentUserId);
 
         // Navigate to Home
         backImageView.setOnClickListener(new View.OnClickListener() {
@@ -114,6 +127,7 @@ public class FootWearFragment extends Fragment implements selectListener {
         // Inflate the layout for this fragment
         return rootView;
     }
+
 
     private void filterItems(String newText) {
         List<Item> filteredList = new ArrayList<>();
@@ -173,8 +187,7 @@ public class FootWearFragment extends Fragment implements selectListener {
     }
 
     @Override
-    public void onItemClick(int position) {
-        Item item = footwearItemList.get(position);
+    public void onItemClick(Item item) {
         Bundle bundle = new Bundle();
         bundle.putString("itemID", item.getItemID());
         bundle.putString("itemDescription", item.getItemDescription());
@@ -194,5 +207,12 @@ public class FootWearFragment extends Fragment implements selectListener {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
 
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        String currentUserId = mAuth.getCurrentUser().getUid();
+        itemViewModel.retrieveItems("Footwear", category, currentUserId);
     }
 }
