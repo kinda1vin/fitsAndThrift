@@ -18,7 +18,7 @@
 
 
         <ImageView
-            android:id="@+id/imageView2"
+            android:id="@+id/carticon"
             android:layout_width="164dp"
             android:layout_height="189dp"
             android:src="@drawable/my_full_logo" />

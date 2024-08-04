@@ -43,11 +43,11 @@
                         android:textStyle="bold" />
 
                     <ImageView
-                        android:id="@+id/imageView2"
+                        android:id="@+id/carticon"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_marginLeft="210dp"
-                        app:srcCompat="@drawable/baseline_shopping_cart_24" />
+                        app:srcCompat="@drawable/cart_notfilled" />
                 </TableRow>
 
             </TableLayout>

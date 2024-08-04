@@ -8,6 +8,8 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -35,6 +37,7 @@ public class Trade_fragment extends Fragment {
 
     private TabHost tabs;
     private ImageView upload;
+    private ImageView carticon;
     private RecyclerView myItemRecyclerView;
     private RecyclerView tradedItemsRecyclerView;
     private itemAdapter myItemAdapter;
@@ -66,6 +69,18 @@ public class Trade_fragment extends Fragment {
 
         upload = view.findViewById(R.id.upload);
         upload.setOnClickListener(onUpload);
+
+        carticon = view.findViewById(R.id.carticon);
+        carticon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fragmentManager = getParentFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.tradeframe, new cartFragment());
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+        });
 
         myItemRecyclerView = view.findViewById(R.id.myitemView);
         tradedItemsRecyclerView = view.findViewById(R.id.traded_items_view);
