@@ -99,7 +99,7 @@ public class Trade_fragment extends Fragment {
             public void onItemClick(Item item) {
                 MyItemDetails_Fragment myItemDetails_fragment = MyItemDetails_Fragment.newInstance(item);
                 getParentFragmentManager().beginTransaction()
-                        .replace(R.id.frame, myItemDetails_fragment)
+                        .replace(R.id.tradeframe, myItemDetails_fragment)
                         .addToBackStack(null)
                         .commit();
             }
