@@ -34,6 +34,7 @@
             android:minHeight="48dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
+            android:textColor="#000000"
             android:textColorHint="#FF2C2929"
             android:textSize="16sp" />
 
@@ -54,6 +55,7 @@
             android:minHeight="48dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
+            android:textColor="#000000"
             android:textColorHint="#FF2C2929"
             android:textSize="16sp" />
 
@@ -86,6 +88,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="You don't have an account? "
+                android:textColor="#000000"
                 android:textSize="12sp" />
 
             <TextView

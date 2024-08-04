@@ -43,7 +43,7 @@
             <TextView
                 android:id="@+id/otherusername"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="46dp"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="5dp"
                 android:textColor="#000000"
@@ -83,6 +83,7 @@
                 android:layout_gravity="center"
                 android:background="#E6E6E6"
                 android:inputType="text"
+                android:textColor="#0E0000"
                 android:textSize="20sp" />
 
             <View

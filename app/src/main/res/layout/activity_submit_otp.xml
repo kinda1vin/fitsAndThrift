@@ -39,6 +39,7 @@
                 android:minHeight="48dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
+                android:textColor="#000000"
                 android:textColorHint="#2C2929"
                 android:textSize="16sp" />
 

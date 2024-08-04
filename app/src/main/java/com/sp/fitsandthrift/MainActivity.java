@@ -33,6 +33,13 @@ public class MainActivity extends AppCompatActivity {
     review_fragment reviewFragment;
     Trade_fragment tradeFragment;
 
+    // Constants for fragment tags
+    private static final String HOME_FRAGMENT_TAG = "HOME_FRAGMENT";
+    private static final String TRADE_FRAGMENT_TAG = "TRADE_FRAGMENT";
+    private static final String NOTI_FRAGMENT_TAG = "NOTI_FRAGMENT";
+    private static final String CHAT_FRAGMENT_TAG = "CHAT_FRAGMENT";
+    private static final String ME_FRAGMENT_TAG = "ME_FRAGMENT";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,9 +49,8 @@ public class MainActivity extends AppCompatActivity {
         user = auth.getCurrentUser();
 
         if (user == null) {
-            Intent intent = new Intent(getApplicationContext(), Login.class);
-            startActivity(intent);
-            finish();
+            navigateToLogin();
+            return; // Ensure to return here to prevent further execution
         }
 
         homeFragment = new Home_Fragment();
@@ -62,56 +68,62 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView.setSelectedItemId(R.id.home);
 
         // Set default fragment
-
-        boolean loadChatFragment = getIntent().getBooleanExtra("loadChatFragment", false);
-        if (loadChatFragment) {
+        if (getIntent().getBooleanExtra("loadChatFragment", false)) {
             bottomNavigationView.setSelectedItemId(R.id.chat);
-            loadFragment(new ChatFragment(), true);
+            loadFragment(chatFragment, CHAT_FRAGMENT_TAG, false);
         } else {
-            bottomNavigationView.setSelectedItemId(R.id.home);
-            loadFragment(new Home_Fragment(), true);
+            loadFragment(homeFragment, HOME_FRAGMENT_TAG, false);
         }
 
+        // Default icon for home
         bottomNavigationView.getMenu().findItem(R.id.home).setIcon(R.drawable.home1);
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int itemId = item.getItemId();
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            int itemId = item.getItemId();
 
-                resetIcons();
+            resetIcons();
 
-                if (itemId == R.id.home) {
-                    loadFragment(new Home_Fragment(), false);
-                    item.setIcon(R.drawable.home1); // Change to selected icon
-                } else if (itemId == R.id.trade) {
-                    loadFragment(new Trade_fragment(), false);
-                    item.setIcon(R.drawable.activetrade); // Change to selected icon
-                } else if (itemId == R.id.noti) {
-                    loadFragment(new notification_fragment(), false);
-                    item.setIcon(R.drawable.bell); // Change to selected icon
-                } else if (itemId == R.id.chat) {
-                    loadFragment(new ChatFragment(), false);
-                    item.setIcon(R.drawable.cmt); // Change to selected icon
-                } else if (itemId == R.id.me) {
-                    if (user != null) {
-                        String email = user.getEmail();
-                        me_fragment meFragment = me_fragment.newInstance(email);
-                        loadFragment(meFragment, false);
-                        item.setIcon(R.drawable.activeprofile);
-                    }
+            if (itemId == R.id.home) {
+                loadFragment(homeFragment, HOME_FRAGMENT_TAG, false);
+                item.setIcon(R.drawable.home1);
+            } else if (itemId == R.id.trade) {
+                loadFragment(tradeFragment, TRADE_FRAGMENT_TAG, false);
+                item.setIcon(R.drawable.activetrade);
+            } else if (itemId == R.id.noti) {
+                loadFragment(notificationFragment, NOTI_FRAGMENT_TAG, false);
+                item.setIcon(R.drawable.bell);
+            } else if (itemId == R.id.chat) {
+                loadFragment(chatFragment, CHAT_FRAGMENT_TAG, false);
+                item.setIcon(R.drawable.cmt);
+            } else if (itemId == R.id.me) {
+                if (user != null) {
+                    String email = user.getEmail();
+                    meFragment = me_fragment.newInstance(email);
+                    loadFragment(meFragment, ME_FRAGMENT_TAG, false);
+                    item.setIcon(R.drawable.activeprofile);
                 }
-
-                return true;
             }
+
+            return true;
         });
+
         getFCMToken();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Set the chat icon when coming back from ChatActivity
+        if (getIntent().getBooleanExtra("loadChatFragment", false)) {
+            bottomNavigationView.setSelectedItemId(R.id.chat);
+            loadFragment(chatFragment, CHAT_FRAGMENT_TAG, false);
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        // Check again if the user is signed in when the activity starts
         user = auth.getCurrentUser();
         if (user == null) {
             navigateToLogin();
@@ -124,15 +136,21 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-    private void loadFragment(Fragment fragment, boolean isAppInitialized) {
+    private void loadFragment(Fragment fragment, String tag, boolean addToBackStack) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        if (isAppInitialized) {
-            fragmentTransaction.add(R.id.frame, fragment);
+        Fragment existingFragment = fragmentManager.findFragmentByTag(tag);
+
+        if (existingFragment == null) {
+            fragmentTransaction.replace(R.id.frame, fragment, tag);
+            if (addToBackStack) {
+                fragmentTransaction.addToBackStack(tag);
+            }
         } else {
-            fragmentTransaction.replace(R.id.frame, fragment);
+            fragmentTransaction.show(existingFragment);
         }
+
         fragmentTransaction.commit();
     }
 
@@ -143,11 +161,11 @@ public class MainActivity extends AppCompatActivity {
         MenuItem meItem = bottomNavigationView.getMenu().findItem(R.id.me);
         MenuItem chatItem = bottomNavigationView.getMenu().findItem(R.id.chat);
 
-        homeItem.setIcon(R.drawable.home); // Default icon for home
-        tradeItem.setIcon(R.drawable.trade); // Default icon for trade
-        notiItem.setIcon(R.drawable.noti); // Default icon for notification
-        meItem.setIcon(R.drawable.profile1); // Default icon for me
-        chatItem.setIcon(R.drawable.chat); // Default icon for chat
+        homeItem.setIcon(R.drawable.home);
+        tradeItem.setIcon(R.drawable.trade);
+        notiItem.setIcon(R.drawable.noti);
+        meItem.setIcon(R.drawable.profile1);
+        chatItem.setIcon(R.drawable.chat);
     }
 
     void getFCMToken() {

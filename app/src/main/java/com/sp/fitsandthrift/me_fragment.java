@@ -92,16 +92,22 @@ public class me_fragment extends Fragment {
 
         TabHost.TabSpec spec = host.newTabSpec("Reviews");
         spec.setContent(R.id.review_tab);
-        spec.setIndicator("Reviews");
+        spec.setIndicator(createTabIndicator("Review"));
         host.addTab(spec);
 
         spec = host.newTabSpec("About");
         spec.setContent(R.id.about_tab);
-        spec.setIndicator("About");
+        spec.setIndicator(createTabIndicator("About"));
         host.addTab(spec);
 
         loadReviewFragment();
     }
+    private View createTabIndicator(String title) {
+        TextView tabIndicator = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.tab_item, null);
+        tabIndicator.setText(title);
+        return tabIndicator;
+    }
+
 
     private void loadUserData() {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();

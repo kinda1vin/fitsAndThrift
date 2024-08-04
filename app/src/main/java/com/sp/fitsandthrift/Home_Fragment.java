@@ -129,4 +129,9 @@ public class Home_Fragment extends Fragment {
         });
         return rootView;
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        cartButton.setImageResource(R.drawable.cart_notfilled);
+    }
 }

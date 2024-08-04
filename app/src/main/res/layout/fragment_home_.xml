@@ -14,84 +14,84 @@
         android:backgroundTint="#E5E5E5"
         android:orientation="vertical">
 
+        <!-- Top Section with Logo and Cart -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5sp"
-            android:layout_marginBottom="10sp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="center_vertical">
 
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingHorizontal="10sp"
-                android:text="Fits&amp;Thrift"
-                android:textColor="#000000"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+            <!-- Larger Logo -->
+            <ImageView
+                android:id="@+id/imageView5"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="16dp"
+                app:srcCompat="@drawable/my_logo" />
 
-            <SearchView
-                android:layout_width="188dp"
-                android:layout_height="32dp"
-                android:layout_weight="1" />
-
+            <!-- Cart Icon -->
             <ImageView
                 android:id="@+id/cart"
-                android:layout_width="wrap_content"
-                android:layout_height="32dp"
-                android:layout_weight="1"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginLeft="220dp"
+                android:layout_marginTop="0dp"
                 app:srcCompat="@drawable/cart_notfilled" />
         </LinearLayout>
 
+        <!-- Gender Section -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10sp"
-            android:layout_marginBottom="10sp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center">
 
+            <!-- Women Section -->
             <TextView
                 android:id="@+id/women"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:layout_marginEnd="10sp"
-                android:layout_weight="1"
                 android:clickable="true"
                 android:text="WOMEN"
+                android:textColor="#000000"
                 android:textSize="25sp"
-                android:textStyle="italic" />
+                android:textStyle="italic"
+                android:paddingEnd="8dp" /> <!-- Slight padding for spacing -->
 
+            <!-- Divider -->
             <TextView
                 android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="|"
+                android:textColor="#000000"
                 android:textSize="20sp" />
 
+            <!-- Men Section -->
             <TextView
                 android:id="@+id/men"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10sp"
-                android:layout_weight="1"
                 android:clickable="true"
                 android:text="MEN"
+                android:textColor="#000000"
                 android:textSize="25sp"
-                android:textStyle="italic" />
+                android:textStyle="italic"
+                android:paddingStart="8dp" /> <!-- Slight padding for spacing -->
         </LinearLayout>
 
+        <!-- Clothing Section -->
         <ImageView
             android:id="@+id/imageView3"
             android:layout_width="235dp"
             android:layout_height="126dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20sp"
-            android:layout_marginBottom="10sp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
             app:srcCompat="@drawable/clothing" />
 
         <Button
@@ -99,20 +99,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:backgroundTint="#000000"
             android:text="CLOTHING"
             android:textColor="#FFFFFF"
             app:cornerRadius="10dp" />
 
+        <!-- Footwear Section -->
         <ImageView
             android:id="@+id/imageView4"
             android:layout_width="227dp"
             android:layout_height="161dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10sp"
-            android:layout_marginBottom="10sp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             app:srcCompat="@drawable/footwear" />
 
         <Button
@@ -120,15 +120,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
             android:backgroundTint="#000000"
             android:text="FOOTWEAR"
             android:textColor="#FFFFFF"
             app:cornerRadius="10dp" />
 
-
     </LinearLayout>
-
-
 </FrameLayout>

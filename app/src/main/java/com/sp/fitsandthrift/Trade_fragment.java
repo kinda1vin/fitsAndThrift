@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TabHost;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.EventListener;
@@ -53,14 +54,15 @@ public class Trade_fragment extends Fragment {
         // Tab1
         TabHost.TabSpec spec = tabs.newTabSpec("History");
         spec.setContent(R.id.history);
-        spec.setIndicator("History");
+        spec.setIndicator(createTabIndicator("History"));
         tabs.addTab(spec);
 
         // Tab2
         spec = tabs.newTabSpec("My Item");
         spec.setContent(R.id.myitem);
-        spec.setIndicator("My Item");
+        spec.setIndicator(createTabIndicator("My Item"));
         tabs.addTab(spec);
+
 
         upload = view.findViewById(R.id.upload);
         upload.setOnClickListener(onUpload);
@@ -88,6 +90,7 @@ public class Trade_fragment extends Fragment {
             }
         });
 
+
         tradedItemAdapter = new itemAdapter(getContext(), tradedItems, new selectListener() {
             @Override
             public void onItemClick(Item item) {
@@ -107,6 +110,11 @@ public class Trade_fragment extends Fragment {
         fetchTradedItems();
 
         return view;
+    }
+    private View createTabIndicator(String title) {
+        TextView tabIndicator = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.tab_item, null);
+        tabIndicator.setText(title);
+        return tabIndicator;
     }
 
     private void fetchMyItems() {

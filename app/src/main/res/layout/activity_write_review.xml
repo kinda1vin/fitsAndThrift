@@ -4,19 +4,22 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <!-- Adding a 20dp top margin to the RatingBar -->
     <RatingBar
         android:id="@+id/rating_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:numStars="5"
-        android:stepSize="1.0" />
+        android:stepSize="1.0"
+        android:layout_marginTop="20dp"/> <!-- Added margin -->
 
     <EditText
         android:id="@+id/review_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:hint="Share details of your own experience with this user"
-        android:layout_marginTop="16dp"/>
+        android:textColor="#000000" />
 
     <Button
         android:id="@+id/save_button"

@@ -40,8 +40,13 @@ public class Usermodel {
         this.gender= gender;
     }
 
-
-    // Getters and Setters
+    public Usermodel(String email, String username, String profilePicUrl, String currentUserId) {
+        this.email = email;
+        this.username = username;
+        this.profilePicUrl = profilePicUrl;
+        this.currentUserId = currentUserId;
+    }
+// Getters and Setters
 
     public Timestamp getCreatedTimestamp() {
         return createdTimestamp;

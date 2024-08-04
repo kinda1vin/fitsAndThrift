@@ -38,10 +38,10 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/phoneNum"
-                android:drawableEnd="@drawable/baseline_phone_24"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/input_text"
+                android:drawableEnd="@drawable/baseline_phone_24"
                 android:ems="10"
                 android:fontFamily="@font/mulish"
                 android:hint="Phone Number"
@@ -49,6 +49,7 @@
                 android:minHeight="48dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
+                android:textColor="#000000"
                 android:textColorHint="#2C2929"
                 android:textSize="16sp" />
 

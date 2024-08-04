@@ -172,6 +172,10 @@ public class uploadItem extends AppCompatActivity {
             } else if (imageUri == null) {
                 Toast.makeText(getApplicationContext(), "Please upload the photo from gallery", Toast.LENGTH_LONG).show();
             } else {
+                Intent intent = new Intent();
+                intent.putExtra("itemDescription", brandnamestr);
+                intent.putExtra("imageUri", imageUri.toString());
+                setResult(RESULT_OK, intent);
                 insertdata();
                 finish();
             }

@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:background="#FBF5F5"
         android:gravity="center_vertical"
         android:orientation="vertical"
         android:paddingBottom="16dp">
@@ -26,6 +27,7 @@
             android:gravity="center"
             android:paddingEnd="8dp"
             android:text="4.0"
+            android:textColor="#000000"
             android:textSize="24sp"
             android:textStyle="bold" />
 
@@ -48,6 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="(123 reviews)"
+            android:textColor="#000000"
             android:textSize="14sp" />
     </LinearLayout>
 
@@ -61,7 +64,8 @@
         android:id="@+id/other_reviewrecycle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:background="#FBF5F5" />
     <!-- Reviews List -->
 
 </LinearLayout>

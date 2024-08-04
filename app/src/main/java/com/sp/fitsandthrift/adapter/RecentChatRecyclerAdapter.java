@@ -3,6 +3,7 @@ package com.sp.fitsandthrift.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,42 +38,59 @@ public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chatroom
         Util.getOtherUserFromChatroom(model.getUserIds())
                 .get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        boolean lastMessageSentByMe = model.getLastMessageSenderId().equals(Util.currentUserId());
+                        DocumentSnapshot documentSnapshot = task.getResult();
 
-                        // Get the other user's data
-                        Usermodel otherUserModel = task.getResult().toObject(Usermodel.class);
+                        if (documentSnapshot.exists()) {  // Check if the document exists
+                            Usermodel otherUserModel = documentSnapshot.toObject(Usermodel.class);
 
-                        // Load the profile picture using Glide
-                        if (otherUserModel.getProfilePicUrl() != null && !otherUserModel.getProfilePicUrl().isEmpty()) {
-                            Glide.with(context)
-                                    .load(otherUserModel.getProfilePicUrl())
-                                    .circleCrop()
-                                    .placeholder(R.drawable.profile1) // Placeholder image
-                                    .error(R.drawable.profile1) // Error image
-                                    .into(holder.profilePic);
+                            if (otherUserModel != null) {
+                                boolean lastMessageSentByMe = model.getLastMessageSenderId().equals(Util.currentUserId());
+
+                                // Load the profile picture using Glide
+                                if (otherUserModel.getProfilePicUrl() != null && !otherUserModel.getProfilePicUrl().isEmpty()) {
+                                    Glide.with(context)
+                                            .load(otherUserModel.getProfilePicUrl())
+                                            .circleCrop()
+                                            .placeholder(R.drawable.profile1) // Placeholder image
+                                            .error(R.drawable.profile1) // Error image
+                                            .into(holder.profilePic);
+                                } else {
+                                    holder.profilePic.setImageResource(R.drawable.profile1); // Default image
+                                }
+
+                                // Set username and last message details
+                                holder.usernameText.setText(otherUserModel.getUsername());
+                                if (lastMessageSentByMe) {
+                                    holder.lastMessageText.setText("You: " + model.getLastMessage());
+                                } else {
+                                    holder.lastMessageText.setText(model.getLastMessage());
+                                }
+                                holder.lastMessageTime.setText(Util.timestampToString(model.getLastMessageTimestamp()));
+
+                                // Set click listener to navigate to the chat activity
+                                holder.itemView.setOnClickListener(v -> {
+                                    Intent intent = new Intent(context, ChatActivity.class);
+                                    // Use AndroidUtil or direct putExtra
+                                    intent.putExtra("username", otherUserModel.getUsername());
+                                    intent.putExtra("email", otherUserModel.getEmail());
+                                    intent.putExtra("profilePicUrl", otherUserModel.getProfilePicUrl());
+                                    intent.putExtra("userId", otherUserModel.getCurrentUserId());
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    context.startActivity(intent);
+                                });
+                            } else {
+                                // Log if Usermodel could not be created
+                                Log.e("RecentChatAdapter", "Failed to convert document to Usermodel");
+                            }
                         } else {
-                            holder.profilePic.setImageResource(R.drawable.profile1); // Default image
+                            Log.e("RecentChatAdapter", "User document does not exist");
                         }
-
-                        // Set username and last message details
-                        holder.usernameText.setText(otherUserModel.getUsername());
-                        if (lastMessageSentByMe) {
-                            holder.lastMessageText.setText("You: " + model.getLastMessage());
-                        } else {
-                            holder.lastMessageText.setText(model.getLastMessage());
-                        }
-                        holder.lastMessageTime.setText(Util.timestampToString(model.getLastMessageTimestamp()));
-
-                        // Set click listener to navigate to the chat activity
-                        holder.itemView.setOnClickListener(v -> {
-                            Intent intent = new Intent(context, ChatActivity.class);
-                            AndroidUtil.passUserModelAsIntent(intent, otherUserModel);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            context.startActivity(intent);
-                        });
+                    } else {
+                        Log.e("RecentChatAdapter", "Failed to get user data", task.getException());
                     }
                 });
     }
+
 
     @NonNull
     @Override

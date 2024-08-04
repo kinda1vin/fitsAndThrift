@@ -26,6 +26,7 @@
             android:layout_width="350dp"
             android:layout_height="wrap_content"
             android:background="@drawable/input_text"
+            android:drawableEnd="@drawable/baseline_person_24"
             android:ems="10"
             android:fontFamily="@font/mulish"
             android:hint="Enter username"
@@ -33,8 +34,8 @@
             android:minHeight="48dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
+            android:textColor="#000000"
             android:textColorHint="#2C2929"
-            android:drawableEnd="@drawable/baseline_person_24"
             android:textSize="16sp" />
         <Space
             android:layout_width="match_parent"
@@ -53,6 +54,7 @@
             android:minHeight="48dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
+            android:textColor="#000000"
             android:textColorHint="#2C2929"
             android:textSize="16sp" />
         <Space
@@ -72,6 +74,7 @@
             android:minHeight="48dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
+            android:textColor="#000000"
             android:textColorHint="#2C2929"
             android:textSize="16sp" />
 
@@ -92,6 +95,7 @@
             android:minHeight="48dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
+            android:textColor="#000000"
             android:textColorHint="#2C2929"
             android:textSize="16sp" />
 

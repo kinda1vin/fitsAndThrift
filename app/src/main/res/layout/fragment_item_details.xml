@@ -148,21 +148,17 @@
 
                 <Button
                     android:id="@+id/requestButton"
-                    android:layout_width="100dp"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="60sp"
-                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|center_horizontal"
+                    android:layout_marginStart="120dp"
+                    android:layout_weight="0"
                     android:backgroundTint="#000000"
-                    android:text="Request to trade"
+                    android:foregroundGravity="center"
+                    android:gravity="center"
+                    android:text="Request To Trade"
                     app:cornerRadius="10dp" />
 
-                <ImageView
-                    android:id="@+id/chatButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:foregroundGravity="right"
-                    app:srcCompat="@drawable/chat" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

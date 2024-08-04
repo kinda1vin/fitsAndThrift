@@ -10,18 +10,6 @@
         android:orientation="vertical">
 
         <!-- res/layout/activity_main.xml or your specific layout file -->
-        <EditText
-            android:id="@+id/editTextAbout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/round_corners_bg"
-            android:hint="Tell us about yourself."
-            android:padding="16dp"
-            android:textColorHint="#CCCCCC"
-            android:layout_marginBottom="16dp"
-            android:gravity="top"
-            android:minHeight="100dp"
-        />
 
 
         <LinearLayout
@@ -35,6 +23,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="8dp"
                 android:text="Contact info"
+                android:textColor="#000000"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -53,7 +42,8 @@
                     android:id="@+id/gmail1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="user@gmail.com" />
+                    android:text="user@gmail.com"
+                    android:textColor="#000000" />
             </LinearLayout>
 
             <LinearLayout
@@ -73,7 +63,8 @@
                     android:id="@+id/phone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="89140367" />
+                    android:text="89140367"
+                    android:textColor="#000000" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

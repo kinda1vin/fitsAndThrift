@@ -1,6 +1,7 @@
 package com.sp.fitsandthrift;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,6 +35,7 @@ public class otheruser_fragment extends Fragment {
     private TextView usernameTextView, emailTextView;
     private ImageView chatIcon;
     private FirebaseFirestore db;
+    private Usermodel otherUserModel; // Add this field
 
     public static otheruser_fragment newInstance(String otherusername, String otherusergmail, String otheruserid) {
         otheruser_fragment fragment = new otheruser_fragment();
@@ -69,7 +72,16 @@ public class otheruser_fragment extends Fragment {
         chatIcon = view.findViewById(R.id.otherchat);
 
         chatIcon.setOnClickListener(v -> {
-            // Handle chat icon click, start chat activity or fragment
+            if (otherUserModel != null) {
+                Intent intent = new Intent(getActivity(), ChatActivity.class);
+                intent.putExtra("username", otherUserModel.getUsername());
+                intent.putExtra("email", otherUserModel.getEmail());
+                intent.putExtra("profilePicUrl", otherUserModel.getProfilePicUrl());
+                intent.putExtra("userId", otherUserModel.getCurrentUserId());
+                startActivity(intent);
+            } else {
+                Toast.makeText(getContext(), "User information is not available yet", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -79,15 +91,20 @@ public class otheruser_fragment extends Fragment {
 
         TabHost.TabSpec spec = host.newTabSpec("Reviews");
         spec.setContent(R.id.other_review_tab);
-        spec.setIndicator("Reviews");
+        spec.setIndicator(createTabIndicator("Review"));
         host.addTab(spec);
 
         spec = host.newTabSpec("About");
         spec.setContent(R.id.other_about_tab);
-        spec.setIndicator("About");
+        spec.setIndicator(createTabIndicator("About"));
         host.addTab(spec);
 
         loadReviewFragment();
+    }
+    private View createTabIndicator(String title) {
+        TextView tabIndicator = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.tab_item, null);
+        tabIndicator.setText(title);
+        return tabIndicator;
     }
 
     private void loadUserData(String userId) {
@@ -98,6 +115,7 @@ public class otheruser_fragment extends Fragment {
                 if (document.exists()) {
                     Usermodel usermodel = document.toObject(Usermodel.class);
                     updateUI(usermodel);
+                    otherUserModel = usermodel; // Store the other user model
                 } else {
                     Log.e("otheruser_fragment", "No such document");
                 }

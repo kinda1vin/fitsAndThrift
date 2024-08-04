@@ -24,6 +24,7 @@
             android:layout_height="wrap_content"
             android:text="Username"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#000000"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -42,5 +43,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="This is a sample review text."
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#000000" />
 </LinearLayout>

@@ -36,14 +36,12 @@ public class cartFragment extends Fragment {
     private FirebaseFirestore db;
     private FirebaseAuth auth;
     private String userID;
-    private SearchView searchView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_cart, container, false);
         backImageView = rootView.findViewById(R.id.backIcon);
         recyclerViewCart = rootView.findViewById(R.id.recyclerViewCart);
-        searchView = rootView.findViewById(R.id.searchView);
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
@@ -52,20 +50,6 @@ public class cartFragment extends Fragment {
         recyclerViewCart.setLayoutManager(new GridLayoutManager(getContext(),2));
         recyclerViewCart.setAdapter(cartAdapter);
 
-        //Set up search View
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                filterItems(query);
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                filterItems(newText);
-                return false;
-            }
-        });
 
         // Get userID from Firebase Authentication if not passed in arguments
         if (auth.getCurrentUser() != null) {
