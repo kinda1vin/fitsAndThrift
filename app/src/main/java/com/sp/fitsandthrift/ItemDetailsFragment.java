@@ -171,7 +171,7 @@ public class ItemDetailsFragment extends Fragment {
                 if (item != null) {
                     itemDescription.setText(item.getItemDescription());
                     color.setText("Color: " + item.getColor());
-                    gender.setText("Gender: " + item.getItemGender());
+                    gender.setText("Gender: " + item.getGender());
                     itemCondition.setText("Item Condition: " + item.getItemCondition());
                     itemType.setText("Type: " + item.getItemType());
                     size.setText("Size: " + item.getSize());

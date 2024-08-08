@@ -159,6 +159,6 @@ public class otheruser_fragment extends Fragment {
     }
 
     public static void setProfilePic(Context context, Uri imageUri, ImageView imageView) {
-        Glide.with(context).load(imageUri).apply(RequestOptions.circleCropTransform()).into(imageView);
+        Glide.with(context).load(imageUri).apply(RequestOptions.circleCropTransform()).placeholder(R.drawable.baseline_account_box_24).into(imageView);
     }
 }

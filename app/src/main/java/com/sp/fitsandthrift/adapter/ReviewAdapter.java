@@ -46,7 +46,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
                     Usermodel usermodel = documentSnapshot.toObject(Usermodel.class);
                     if (usermodel != null) {
                         holder.username.setText(usermodel.getUsername());
-                        Glide.with(context).load(usermodel.getProfilePicUrl()).circleCrop().placeholder(R.drawable.profile).error(R.drawable.profile).into(holder.profilePic);
+                        Glide.with(context).load(usermodel.getProfilePicUrl()).circleCrop().placeholder(R.drawable.baseline_account_box_24).error(R.drawable.profile).into(holder.profilePic);
                     }
                 }
             });

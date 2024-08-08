@@ -67,6 +67,7 @@ public class ClothingFragment extends Fragment implements selectListener {
         String currentUserId = mAuth.getCurrentUser().getUid();
 
         itemViewModel.getItems().observe(getViewLifecycleOwner(), items -> {
+            updateClothingItems(category);
             clothingItemList.clear();
             if (items != null) {
                 for (Item item : items) {
