@@ -14,9 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.sp.fitsandthrift.model.Usermodel;
 
 public class Login extends AppCompatActivity {
@@ -24,6 +21,7 @@ public class Login extends AppCompatActivity {
     private Button btnLogin;
     private FirebaseAuth mAuth;
     private TextView registerNow;
+    private TextView forgotPassword;
     private ProgressBar progressBar;
     private Usermodel usermodel;
 
@@ -38,11 +36,17 @@ public class Login extends AppCompatActivity {
         btnLogin = findViewById(R.id.btnLogin);
         progressBar = findViewById(R.id.progressBar);
         registerNow = findViewById(R.id.registerNow);
+        TextView forgotPassword = findViewById(R.id.forgotPassword);
 
         registerNow.setOnClickListener(v -> {
             Intent intent = new Intent(getApplicationContext(), Get_otp.class);
             startActivity(intent);
-            finish();
+
+        });
+
+        forgotPassword.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), ForgotPasswordActivity.class);
+            startActivity(intent);
         });
 
         btnLogin.setOnClickListener(v -> {

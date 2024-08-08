@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -59,6 +58,25 @@
             android:textColorHint="#FF2C2929"
             android:textSize="16sp" />
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="10dp">
+
+            <TextView
+                android:id="@+id/forgotPassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Forgot Password?"
+                android:textColor="#FF3951"
+                android:layout_marginTop="16dp"
+                android:textSize="12sp"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="20dp"/>
+        </RelativeLayout>
+
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
@@ -68,7 +86,6 @@
         <Space
             android:layout_width="match_parent"
             android:layout_height="20dp" />
-
 
         <Button
             android:id="@+id/btnLogin"
@@ -100,7 +117,6 @@
                 android:textColor="#FF3951"
                 android:textSize="12sp" />
         </LinearLayout>
-
 
     </LinearLayout>
 </RelativeLayout>
