@@ -31,7 +31,8 @@
 
                 <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:gravity="center">
 
                     <TextView
                         android:id="@+id/textView3"
@@ -46,7 +47,9 @@
                         android:id="@+id/carticon"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:layout_marginLeft="210dp"
+                        android:layout_marginLeft="198dp"
+                        android:layout_marginTop="5dp"
+                        android:foregroundGravity="center"
                         app:srcCompat="@drawable/cart_notfilled" />
                 </TableRow>
 

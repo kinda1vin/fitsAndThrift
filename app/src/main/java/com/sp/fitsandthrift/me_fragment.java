@@ -184,7 +184,7 @@ public class me_fragment extends Fragment {
     private void setProfilePic(Uri imageUri, ImageView imageView) {
         if (isAdded() && getActivity() != null) {
             Glide.with(this)
-                    .load(imageUri).placeholder(R.drawable.baseline_account_box_24)
+                    .load(imageUri).placeholder(R.drawable.baseline_account_circle_24)
                     .apply(RequestOptions.circleCropTransform())
                     .into(imageView);
         } else {

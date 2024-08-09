@@ -14,7 +14,7 @@ public class about_fragment extends Fragment {
     private TextView phoneTextView;
 
     public about_fragment() {
-        // Required empty public constructor
+
     }
 
     public static about_fragment newInstance(String email, String phone) {

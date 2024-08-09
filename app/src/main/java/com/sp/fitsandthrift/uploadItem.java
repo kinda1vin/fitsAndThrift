@@ -152,7 +152,6 @@ public class uploadItem extends AppCompatActivity {
         ArrayList<String> itemTypeList = new ArrayList<>();
         itemTypeList.add("Clothing");
         itemTypeList.add("Footwear");
-        itemTypeList.add("Accessories");
         ArrayAdapter<String> itemTypeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, itemTypeList);
         itemTypeAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
         itemType.setAdapter(itemTypeAdapter);

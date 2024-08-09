@@ -38,7 +38,6 @@
                 android:layout_height="30dp"
                 android:layout_gravity="center_vertical|end"
                 android:layout_marginLeft="220dp"
-                android:layout_marginTop="0dp"
                 app:srcCompat="@drawable/cart_notfilled" />
         </LinearLayout>
 

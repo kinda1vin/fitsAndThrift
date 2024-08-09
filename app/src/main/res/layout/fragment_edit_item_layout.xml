@@ -42,17 +42,20 @@
             <Spinner
                 android:id="@+id/itemCondition"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="#000000"/>
 
             <Spinner
                 android:id="@+id/itemGender"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="#000000"/>
 
             <Spinner
                 android:id="@+id/itemType"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="#000000"/>
 
             <Button
                 android:id="@+id/update_item"

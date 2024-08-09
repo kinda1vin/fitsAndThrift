@@ -52,7 +52,7 @@ public class NotiRecycleAdapter extends RecyclerView.Adapter<NotiRecycleAdapter.
         Glide.with(context)
                 .load(notification.getSenderProfilePicUrl())
                 .circleCrop()  // Circular crop the profile picture
-                .placeholder(R.drawable.profile)  // Placeholder image
+                .placeholder(R.drawable.baseline_account_circle_24)  // Placeholder image
                 .error(R.drawable.profile)  // Error image
                 .into(holder.profileImage);
 

@@ -21,12 +21,13 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
 
             <TextView
                 android:id="@+id/itemDescription"
-                android:layout_width="130dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:textColor="@android:color/black"
@@ -34,10 +35,10 @@
 
             <ImageView
                 android:id="@+id/removeBin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:layout_weight="1"
-                card_view:srcCompat="@drawable/baseline_delete_forever_24" />
+                card_view:srcCompat="@drawable/delete" />
         </LinearLayout>
 
     </LinearLayout>
