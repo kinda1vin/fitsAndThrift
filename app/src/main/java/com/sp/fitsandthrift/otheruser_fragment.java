@@ -30,19 +30,21 @@ public class otheruser_fragment extends Fragment {
     private static final String ARG_OTHERUSERNAME = "otherusername";
     private static final String ARG_OTHERUSERGMAIL = "otherusergmail";
     private static final String ARG_OTHERUSERID = "otheruserid";
+    private static final String ARG_OTHERUSERPROFILEPIC = "otheruserprofilepic";
 
     private ImageView profilePic;
     private TextView usernameTextView, emailTextView;
     private ImageView chatIcon;
     private FirebaseFirestore db;
-    private Usermodel otherUserModel; // Add this field
+    private Usermodel otherUserModel; // Store the other user's data
 
-    public static otheruser_fragment newInstance(String otherusername, String otherusergmail, String otheruserid) {
+    public static otheruser_fragment newInstance(String otherusername, String otherusergmail, String otheruserid, String otheruserprofilepic) {
         otheruser_fragment fragment = new otheruser_fragment();
         Bundle args = new Bundle();
         args.putString(ARG_OTHERUSERNAME, otherusername);
         args.putString(ARG_OTHERUSERGMAIL, otherusergmail);
         args.putString(ARG_OTHERUSERID, otheruserid);
+        args.putString(ARG_OTHERUSERPROFILEPIC, otheruserprofilepic);
         fragment.setArguments(args);
         return fragment;
     }
@@ -83,6 +85,7 @@ public class otheruser_fragment extends Fragment {
                 Toast.makeText(getContext(), "User information is not available yet", Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 
     private void setupTabHost(View view) {
@@ -101,6 +104,7 @@ public class otheruser_fragment extends Fragment {
 
         loadReviewFragment();
     }
+
     private View createTabIndicator(String title) {
         TextView tabIndicator = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.tab_item, null);
         tabIndicator.setText(title);
@@ -112,15 +116,17 @@ public class otheruser_fragment extends Fragment {
         userRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
-                if (document.exists()) {
+                if (document != null && document.exists()) {
                     Usermodel usermodel = document.toObject(Usermodel.class);
                     updateUI(usermodel);
-                    otherUserModel = usermodel; // Store the other user model
+                    otherUserModel = usermodel; // Store the other user's data
                 } else {
                     Log.e("otheruser_fragment", "No such document");
+                    Toast.makeText(getContext(), "User not found.", Toast.LENGTH_SHORT).show();
                 }
             } else {
                 Log.e("otheruser_fragment", "Failed to load user data", task.getException());
+                Toast.makeText(getContext(), "Failed to load user data.", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -129,13 +135,17 @@ public class otheruser_fragment extends Fragment {
         if (usermodel != null) {
             usernameTextView.setText(usermodel.getUsername());
             emailTextView.setText(usermodel.getEmail());
+            Log.d("ProfilePicURL", "URL: " + usermodel.getProfilePicUrl()); // Log the URL
             if (!TextUtils.isEmpty(usermodel.getProfilePicUrl())) {
                 Uri profilePicUri = Uri.parse(usermodel.getProfilePicUrl());
                 setProfilePic(getActivity(), profilePicUri, profilePic);
+            } else {
+                profilePic.setImageResource(R.drawable.baseline_account_circle_24); // Default image if URL is empty or null
             }
             updateAboutFragment(usermodel.getEmail(), usermodel.getPhoneNumber());
         }
     }
+
 
     private void updateAboutFragment(String email, String phone) {
         about_fragment aboutFragment = (about_fragment) getChildFragmentManager().findFragmentById(R.id.other_about_tab);
@@ -159,6 +169,16 @@ public class otheruser_fragment extends Fragment {
     }
 
     public static void setProfilePic(Context context, Uri imageUri, ImageView imageView) {
-        Glide.with(context).load(imageUri).apply(RequestOptions.circleCropTransform()).placeholder(R.drawable.baseline_account_circle_24).into(imageView);
+        if (imageUri != null) {
+            Glide.with(context)
+                    .load(imageUri)
+                    .apply(RequestOptions.circleCropTransform())
+                    .placeholder(R.drawable.baseline_account_circle_24)
+                    .error(R.drawable.baseline_account_circle_24) // Show placeholder on error
+                    .into(imageView);
+        } else {
+            imageView.setImageResource(R.drawable.baseline_account_circle_24); // Default image if URI is null
+        }
     }
+
 }

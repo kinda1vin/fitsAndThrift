@@ -34,24 +34,27 @@ public class Util {
     // Retrieve current user's profile picture URL
     public static String currentUserProfilePicUrl() {
         try {
-            // Synchronously wait for the data
             Task<DocumentSnapshot> task = getCurrentUserData();
-            DocumentSnapshot snapshot = task.getResult();
-            if (snapshot != null) {
-                Usermodel usermodel = snapshot.toObject(Usermodel.class);
-                if (usermodel != null) {
-                    return usermodel.getProfilePicUrl();
+            if (task.isSuccessful()) {
+                DocumentSnapshot snapshot = task.getResult();
+                if (snapshot != null) {
+                    Usermodel usermodel = snapshot.toObject(Usermodel.class);
+                    if (usermodel != null) {
+                        return usermodel.getProfilePicUrl();
+                    }
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return ""; // Default if no URL is found
+        return ""; // Return an empty string if no URL is found
     }
 
     // Get Storage Reference for current user's profile picture
     public static StorageReference getCurrentProfilePicStorageRef() {
-        return FirebaseStorage.getInstance().getReference().child("profile_pic").child(currentUserId());
+        return FirebaseStorage.getInstance().getReference()
+                .child("profile_pic")
+                .child(currentUserId());
     }
 
     // Get reference to all users collection
@@ -70,13 +73,19 @@ public class Util {
     }
 
     // Generate chatroom ID based on user IDs
+    // Generate chatroom ID based on user IDs
     public static String getChatroomId(String userId1, String userId2) {
+        if (userId1 == null || userId2 == null) {
+            throw new IllegalArgumentException("User IDs must not be null");
+        }
+
         if (userId1.hashCode() < userId2.hashCode()) {
             return userId1 + "_" + userId2;
         } else {
             return userId2 + "_" + userId1;
         }
     }
+
 
     // Get reference to all chatrooms collection
     public static CollectionReference allChatroomCollectionReference() {
@@ -85,14 +94,18 @@ public class Util {
 
     // Retrieve the other user's document reference from a chatroom
     public static DocumentReference getOtherUserFromChatroom(List<String> userIds) {
-        if (userIds.get(0).equals(currentUserId())) {
-            return allUserCollectionReference().document(userIds.get(1));
-        } else {
-            return allUserCollectionReference().document(userIds.get(0));
+        if (userIds == null || userIds.isEmpty()) {
+            throw new IllegalArgumentException("User IDs list cannot be null or empty");
         }
+        if (userIds.size() != 2) {
+            throw new IllegalArgumentException("User IDs list must contain exactly two user IDs");
+        }
+
+        String otherUserId = userIds.get(0).equals(currentUserId()) ? userIds.get(1) : userIds.get(0);
+        return allUserCollectionReference().document(otherUserId);
     }
 
-    // Convert Timestamp to string format
+    // Convert Timestamp to string format (e.g., HH:mm)
     public static String timestampToString(Timestamp timestamp) {
         return new SimpleDateFormat("HH:mm").format(timestamp.toDate());
     }

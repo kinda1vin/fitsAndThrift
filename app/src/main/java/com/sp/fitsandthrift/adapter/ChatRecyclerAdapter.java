@@ -1,7 +1,6 @@
 package com.sp.fitsandthrift.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,26 +29,21 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
 
     @Override
     protected void onBindViewHolder(@NonNull ChatModelViewHolder holder, int position, @NonNull ChatMessageModel model) {
-        Log.i("haushd","asjd");
-        if(model.getSenderId().equals(Util.currentUserId())){
+        if (model.getSenderId().equals(Util.currentUserId())) {
             holder.leftChatLayout.setVisibility(View.GONE);
             holder.rightChatLayout.setVisibility(View.VISIBLE);
             holder.rightChatTextview.setText(model.getMessage());
-        }else{
+        } else {
             holder.rightChatLayout.setVisibility(View.GONE);
             holder.leftChatLayout.setVisibility(View.VISIBLE);
             holder.leftChatTextview.setText(model.getMessage());
         }
 
         if (position == 0) {
-            holder.itemView.post(new Runnable() {
-                @Override
-                public void run() {
-                    getRecyclerView(holder).smoothScrollToPosition(0);
-                }
-            });
+            holder.itemView.post(() -> getRecyclerView(holder).smoothScrollToPosition(0));
         }
     }
+
     private RecyclerView getRecyclerView(RecyclerView.ViewHolder holder) {
         return (RecyclerView) holder.itemView.getParent();
     }
@@ -57,14 +51,14 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
     @NonNull
     @Override
     public ChatModelViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.chat_message_recycler_row,parent,false);
+        View view = LayoutInflater.from(context).inflate(R.layout.chat_message_recycler_row, parent, false);
         return new ChatModelViewHolder(view);
     }
 
-    class ChatModelViewHolder extends RecyclerView.ViewHolder{
+    class ChatModelViewHolder extends RecyclerView.ViewHolder {
 
-        LinearLayout leftChatLayout,rightChatLayout;
-        TextView leftChatTextview,rightChatTextview;
+        LinearLayout leftChatLayout, rightChatLayout;
+        TextView leftChatTextview, rightChatTextview;
 
         public ChatModelViewHolder(@NonNull View itemView) {
             super(itemView);

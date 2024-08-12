@@ -52,8 +52,9 @@ public class SearchUserRecyclerAdapter extends FirestoreRecyclerAdapter<Usermode
         }
 
         holder.itemView.setOnClickListener(v -> {
+            // Intent to start ChatActivity and pass selected user's data
             Intent intent = new Intent(context, ChatActivity.class);
-            AndroidUtil.passUserModelAsIntent(intent, model);
+            AndroidUtil.passUserModelAsIntent(intent, model); // Pass the user model using this method
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         });

@@ -70,6 +70,7 @@ public class ItemDetailsFragment extends Fragment {
 
         String itemID = getArguments().getString("itemID");
 
+
         if (itemID == null) {
             Toast.makeText(getContext(), "Item not found", Toast.LENGTH_SHORT).show();
             return rootView;
@@ -99,7 +100,8 @@ public class ItemDetailsFragment extends Fragment {
                     Bundle bundle = new Bundle();
                     bundle.putString("otherusername", user.getUsername());
                     bundle.putString("otherusergmail", user.getEmail());
-                    bundle.putString("otheruserid", userID);
+                    bundle.putString("otheruserid", user.getCurrentUserId());
+                    bundle.putString("otheruserpfp", user.getProfilePicUrl());
 
                     otheruser_fragment otherUserFragment = new otheruser_fragment();
                     otherUserFragment.setArguments(bundle);

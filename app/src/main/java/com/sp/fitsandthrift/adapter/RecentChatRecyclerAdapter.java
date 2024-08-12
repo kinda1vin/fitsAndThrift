@@ -2,7 +2,6 @@ package com.sp.fitsandthrift.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,7 +36,7 @@ public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chatroom
     protected void onBindViewHolder(@NonNull ChatroomModelViewHolder holder, int position, @NonNull ChatroomModel model) {
         Util.getOtherUserFromChatroom(model.getUserIds())
                 .get().addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
+                    if (task.isSuccessful() && task.getResult() != null) {
                         DocumentSnapshot documentSnapshot = task.getResult();
 
                         if (documentSnapshot.exists()) {  // Check if the document exists
@@ -47,39 +46,16 @@ public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chatroom
                                 boolean lastMessageSentByMe = model.getLastMessageSenderId().equals(Util.currentUserId());
 
                                 // Load the profile picture using Glide
-                                if (otherUserModel.getProfilePicUrl() != null && !otherUserModel.getProfilePicUrl().isEmpty()) {
-                                    Glide.with(context)
-                                            .load(otherUserModel.getProfilePicUrl())
-                                            .circleCrop()
-                                            .placeholder(R.drawable.profile1) // Placeholder image
-                                            .error(R.drawable.profile1) // Error image
-                                            .into(holder.profilePic);
-                                } else {
-                                    holder.profilePic.setImageResource(R.drawable.profile1); // Default image
-                                }
+                                loadProfilePicture(otherUserModel.getProfilePicUrl(), holder.profilePic);
 
                                 // Set username and last message details
                                 holder.usernameText.setText(otherUserModel.getUsername());
-                                if (lastMessageSentByMe) {
-                                    holder.lastMessageText.setText("You: " + model.getLastMessage());
-                                } else {
-                                    holder.lastMessageText.setText(model.getLastMessage());
-                                }
+                                holder.lastMessageText.setText(lastMessageSentByMe ? "You: " + model.getLastMessage() : model.getLastMessage());
                                 holder.lastMessageTime.setText(Util.timestampToString(model.getLastMessageTimestamp()));
 
                                 // Set click listener to navigate to the chat activity
-                                holder.itemView.setOnClickListener(v -> {
-                                    Intent intent = new Intent(context, ChatActivity.class);
-                                    // Use AndroidUtil or direct putExtra
-                                    intent.putExtra("username", otherUserModel.getUsername());
-                                    intent.putExtra("email", otherUserModel.getEmail());
-                                    intent.putExtra("profilePicUrl", otherUserModel.getProfilePicUrl());
-                                    intent.putExtra("userId", otherUserModel.getCurrentUserId());
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    context.startActivity(intent);
-                                });
+                                holder.itemView.setOnClickListener(v -> navigateToChatActivity(otherUserModel));
                             } else {
-                                // Log if Usermodel could not be created
                                 Log.e("RecentChatAdapter", "Failed to convert document to Usermodel");
                             }
                         } else {
@@ -91,6 +67,25 @@ public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chatroom
                 });
     }
 
+    private void loadProfilePicture(String profilePicUrl, ImageView imageView) {
+        if (profilePicUrl != null && !profilePicUrl.isEmpty()) {
+            Glide.with(context)
+                    .load(profilePicUrl)
+                    .circleCrop()
+                    .placeholder(R.drawable.profile1) // Placeholder image
+                    .error(R.drawable.profile1) // Error image
+                    .into(imageView);
+        } else {
+            imageView.setImageResource(R.drawable.profile1); // Default image
+        }
+    }
+
+    private void navigateToChatActivity(Usermodel otherUserModel) {
+        Intent intent = new Intent(context, ChatActivity.class);
+        AndroidUtil.passUserModelAsIntent(intent, otherUserModel);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
 
     @NonNull
     @Override

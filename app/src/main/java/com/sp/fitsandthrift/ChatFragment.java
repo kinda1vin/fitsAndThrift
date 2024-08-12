@@ -52,19 +52,23 @@ public class ChatFragment extends Fragment {
     }
 
     void setupRecyclerView() {
+        String currentUserId = Util.currentUserId();
+        if (TextUtils.isEmpty(currentUserId)) {
+            Log.e("ChatFragment", "Current User ID is null or empty");
+            return;
+        }
+
         Query query = Util.allChatroomCollectionReference()
-                .whereArrayContains("userIds", Util.currentUserId())
+                .whereArrayContains("userIds", currentUserId)
                 .orderBy("lastMessageTimestamp", Query.Direction.DESCENDING);
 
         FirestoreRecyclerOptions<ChatroomModel> options = new FirestoreRecyclerOptions.Builder<ChatroomModel>()
                 .setQuery(query, ChatroomModel.class).build();
 
-        adapter = new RecentChatRecyclerAdapter( options, getContext());
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext() ));
+        adapter = new RecentChatRecyclerAdapter(options, getContext());
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
         adapter.startListening();
-
-
     }
 
     private void startChatWithUser(Usermodel otherUser) {
